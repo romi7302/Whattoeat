@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>About Us — What to Eat Wheel</title>
+<meta name="description" content="What to Eat Wheel is a free tool that picks what to eat for you. Learn how the wheel works, what's on it, and why it needs no sign-up.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍽️</text></svg>">
+<style>
+/* Picker Wheel layout, American edition: white header, light-blue tool band, navy + cherry red, dark-navy footer */
+:root{
+  --sage:#EAF0F7; --sage2:#DCE6F2; --card:#FFFFFF; --card2:#F2F6FB;
+  --ink:#1B2A41; --muted:#5A6B84; --line:#D3DEEB; --line2:#B9CBE0;
+  --green:#24406B; --green-d:#16294A; --yellow:#F2C230; --yellow-d:#D9A90B;
+  --tomato:#D43D2A; --tomato-d:#B3271E; --leaf:#2E7D4F; --leaf-bg:#E3F2E7;
+  --radius:12px; --shadow:0 6px 22px rgba(46,74,31,.10);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;background:#fff;color:var(--ink);line-height:1.6}
+h1,h2,h3{line-height:1.2;margin:0;color:var(--ink)}
+a{color:var(--tomato-d)}
+button,input,summary{font:inherit}
+button{cursor:pointer}
+.wrap{max-width:1180px;margin:0 auto;padding:0 18px}
+.article-wrap{max-width:860px;margin:0 auto;padding:0 18px}
+/* Header — like Picker Wheel: brand left, small buttons right */
+.site-header{background:#fff;border-bottom:1px solid var(--line)}
+.flag-strip{height:5px;background:linear-gradient(90deg,#B22234 0 33.3%,#fff 33.3% 66.6%,#3C3B6E 66.6% 100%)}
+.header-inner{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 0;flex-wrap:wrap}
+.brand{text-decoration:none;color:var(--ink);display:flex;flex-direction:column;line-height:1.15}
+.brand strong{font-size:1.25rem;letter-spacing:-.01em}
+.brand span{font-size:.82rem;color:var(--muted)}
+.header-actions{display:flex;gap:8px;flex-wrap:wrap}
+.hbtn{border:1px solid var(--line2);background:#fff;border-radius:8px;padding:9px 14px;font-weight:700;font-size:.92rem;color:var(--ink);text-decoration:none;display:inline-flex;align-items:center;gap:6px}
+.hbtn:hover{border-color:var(--green);color:var(--green-d)}
+.hbtn.primary{background:var(--green);border-color:var(--green);color:#fff}
+.hbtn.primary:hover{background:var(--green-d)}
+/* Tool band — pale sage green, wheel left, inputs panel right */
+.tool-band{background:var(--sage);border-bottom:1px solid var(--line);padding:20px 0 30px}
+.presets{display:flex;gap:8px;flex-wrap:nowrap;margin-bottom:0;overflow-x:auto;scrollbar-width:none;padding:4px 2px}
+.scroll-row{display:flex;align-items:center;gap:8px;margin-bottom:14px}
+.scroll-row.filters-row{margin-bottom:20px}
+.scroll-row .presets{flex:1;min-width:0}
+.scroll-row .filters-bar{flex:1;min-width:0}
+.scroll-arrow{flex:0 0 auto;width:32px;height:32px;border-radius:50%;border:1.5px solid var(--line2);background:#fff;color:var(--ink);font-size:1.15rem;line-height:1;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0}
+.scroll-arrow:hover{border-color:var(--green);color:var(--green)}
+.scroll-arrow:disabled{opacity:.35;cursor:default}
+.presets::-webkit-scrollbar{display:none}
+.preset{border:1.5px solid var(--line2);background:#fff;border-radius:999px;padding:9px 14px;font-weight:700;font-size:.9rem;color:var(--ink);white-space:nowrap;flex-shrink:0}
+.preset:hover{border-color:var(--green)}
+.preset.active{border-color:var(--green);background:var(--green);color:#fff}
+.filters-bar{background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:12px 14px;display:flex;gap:14px;margin-bottom:0;overflow-x:auto;scrollbar-width:none}
+.filters-bar::-webkit-scrollbar{display:none}
+.filter-group{flex:0 0 auto}
+.filter-group label{display:block;font-size:.72rem;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+.chips{display:flex;gap:6px;flex-wrap:nowrap}
+.chip{border:1.5px solid var(--line);background:#fff;border-radius:999px;padding:7px 11px;font-weight:700;font-size:.86rem;color:var(--ink);white-space:nowrap;flex-shrink:0}
+.chip.active{background:var(--ink);color:#fff;border-color:var(--ink)}
+.tool-grid{display:grid;grid-template-columns:minmax(0,1fr) 380px;gap:26px;align-items:start}
+.wheel-wrap{position:relative;width:min(520px,94vw);margin:0 auto;aspect-ratio:1/1}
+.wheel-pointer{position:absolute;left:50%;top:-4px;transform:translateX(-50%);z-index:3;width:0;height:0;border-left:15px solid transparent;border-right:15px solid transparent;border-top:26px solid var(--green-d);filter:drop-shadow(0 3px 4px rgba(0,0,0,.25))}
+#wheel{width:100%;height:100%;display:block;transition:transform 5.2s cubic-bezier(.12,.8,.08,1);filter:drop-shadow(0 12px 22px rgba(46,74,31,.20))}
+.wheel-center{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:26%;aspect-ratio:1/1;border-radius:50%;background:#fff;border:3px solid var(--line);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:8px;z-index:2;box-shadow:0 4px 14px rgba(0,0,0,.12)}
+.wheel-center strong{font-size:.95rem;line-height:1.1}
+.wheel-center small{color:var(--muted);font-weight:700;font-size:.7rem}
+.wheel-center{cursor:pointer;transition:transform .15s ease,box-shadow .15s ease}
+.wheel-center:hover{transform:translate(-50%,-50%) scale(1.05);box-shadow:0 8px 22px rgba(0,0,0,.20)}
+.wheel-center:active{transform:translate(-50%,-50%) scale(.98)}
+.wheel-center:focus-visible{outline:3px solid var(--tomato);outline-offset:2px}
+.spin-row{display:flex;gap:10px;justify-content:center;margin-top:18px;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:0;border-radius:999px;padding:13px 24px;font-weight:800;font-size:1rem;text-decoration:none}
+.btn-spin{background:var(--tomato);color:#fff;box-shadow:0 8px 18px rgba(212,61,42,.35)}
+.btn-spin:hover{background:var(--tomato-d)}
+.btn-spin:active{transform:scale(.98)}
+.btn-ghost{background:#fff;color:var(--ink);border:1.5px solid var(--line2)}
+.btn:disabled{opacity:.55;cursor:not-allowed}
+.btn-sm{padding:10px 16px;font-size:.92rem}
+.count-line{text-align:center;color:var(--muted);font-weight:700;margin-top:12px;font-size:.92rem}
+/* Right column: INPUTS card (Picker Wheel style) + result */
+.side-col{display:flex;flex-direction:column;gap:16px;min-width:0}
+.inputs-card{background:#fff;border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}
+.inputs-head{display:flex;align-items:center;gap:10px;padding:12px 14px;border-bottom:1px solid var(--line);background:var(--card2);flex-wrap:wrap}
+.inputs-head .title{font-weight:800;letter-spacing:.05em;font-size:.92rem}
+.inputs-head .count{color:var(--muted);font-weight:700;font-size:.85rem}
+.inputs-tabs{margin-left:auto;display:flex;gap:4px}
+.tab{border:1px solid var(--line2);background:#fff;border-radius:8px;padding:7px 10px;font-weight:700;font-size:.82rem;color:var(--ink)}
+.tab.active{background:var(--ink);color:#fff;border-color:var(--ink)}
+.inputs-table-head,.inputs-row{display:grid;grid-template-columns:20px minmax(0,1fr) 64px 40px 40px;gap:6px;align-items:center;padding:9px 14px}
+.inputs-table-head{font-size:.68rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--line);background:#fff}
+.inputs-list{list-style:none;margin:0;padding:0;max-height:300px;overflow-y:auto}
+.inputs-row{border-bottom:1px solid #EDF1E4;font-size:.92rem}
+.inputs-row:last-child{border-bottom:0}
+.inputs-row .dot{width:14px;height:14px;border-radius:4px;display:inline-block}
+.inputs-row .name{font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.inputs-row .meal{font-size:.78rem;font-weight:700;color:var(--muted)}
+.inputs-row.hidden-row{opacity:.45;background:#F4F7EE}
+.icon-btn{border:1px solid var(--line);background:#fff;border-radius:8px;width:32px;height:32px;font-size:1rem;line-height:1;padding:0}
+.icon-btn:hover{border-color:var(--green);color:var(--green-d)}
+.inputs-add{display:flex;gap:8px;padding:12px 14px;border-top:1px solid var(--line)}
+.inputs-add input{flex:1;min-width:0;border:1.5px solid var(--line2);border-radius:10px;padding:11px 12px;font-size:.95rem}
+.inputs-note{margin:0;padding:0 14px 12px;color:var(--muted);font-size:.85rem}
+.custom-list{display:flex;gap:6px;flex-wrap:wrap;padding:0 14px 14px}
+.custom-list:empty{display:none}
+.custom-item{background:var(--sage);border:1px solid var(--line);border-radius:999px;padding:6px 6px 6px 12px;font-weight:700;font-size:.85rem;display:inline-flex;gap:6px;align-items:center}
+.custom-item button{width:26px;height:26px;border-radius:50%;border:0;background:#fff;font-weight:800;padding:0}
+.text-mode{padding:12px 14px;border-top:1px solid var(--line)}
+.text-mode textarea{width:100%;min-height:120px;border:1.5px solid var(--line2);border-radius:10px;padding:10px 12px;font:inherit;font-size:.92rem;resize:vertical}
+.text-mode p{color:var(--muted);font-size:.85rem;margin:8px 0 10px}
+/* Result card */
+.result{border:1.5px dashed var(--line2);border-radius:var(--radius);padding:18px;background:var(--card2);min-height:190px}
+.result.filled{border-style:solid;border-color:var(--yellow-d);background:#fff}
+.result .kicker{font-size:.75rem;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:var(--tomato-d)}
+.result h3{font-size:1.7rem;margin:6px 0 8px}
+.tags{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0}
+.tag{font-size:.8rem;font-weight:800;padding:6px 10px;border-radius:999px;background:var(--sage);border:1px solid var(--line)}
+.tag.veg{background:var(--leaf-bg);color:var(--leaf);border-color:transparent}
+.tag.nonveg{background:#FDE8E0;color:#B23A17;border-color:transparent}
+.ingredients{margin-top:12px}
+.ingredients h4{margin:0 0 6px;font-size:.92rem}
+.ingredients p{margin:0;color:var(--muted)}
+.result-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
+.result-actions .btn{padding:10px 16px;font-size:.92rem}
+/* Result popup */
+.modal-overlay{position:fixed;inset:0;background:rgba(20,32,18,.55);display:flex;align-items:center;justify-content:center;z-index:100;padding:18px}
+.modal-overlay[hidden]{display:none}
+.modal{background:#fff;border-radius:20px;max-width:460px;width:100%;padding:26px 24px;box-shadow:0 24px 60px rgba(0,0,0,.35);position:relative;max-height:88vh;overflow-y:auto}
+.modal .close-x{position:absolute;top:8px;right:12px;border:0;background:none;font-size:1.7rem;line-height:1;padding:6px;cursor:pointer;color:var(--muted)}
+.modal h3{font-size:1.9rem;margin:6px 0 8px}
+.modal .result-actions{margin-top:18px}
+/* Article — narrow, Picker Wheel style */
+.article{padding:30px 0 10px}
+.popular{font-size:.95rem;color:var(--muted);margin:0 0 14px}
+.popular a{font-weight:700}
+.article h1{font-size:clamp(1.7rem,3.5vw,2.3rem);margin-bottom:18px}
+.toc{border:1px solid var(--line);border-radius:var(--radius);background:var(--card2);padding:16px 20px;margin-bottom:28px}
+.toc strong{display:block;margin-bottom:8px}
+.toc ol{margin:0;padding-left:22px;columns:2;column-gap:32px}
+.toc li{margin:4px 0}
+.toc a{color:var(--ink);text-decoration:none;font-weight:600}
+.toc a:hover{color:var(--tomato-d);text-decoration:underline}
+.article section{margin-bottom:30px}
+.article h2{font-size:1.45rem;margin-bottom:10px}
+.article h3{font-size:1.12rem;margin:20px 0 8px}
+.article p{margin:0 0 12px}
+.article ul,.article ol{margin:0 0 12px;padding-left:22px}
+.article li{margin:4px 0}
+.meal-cards{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:14px}
+.meal-card{border:1px solid var(--line);border-radius:var(--radius);padding:16px;background:#fff;text-align:left}
+.meal-card:hover{border-color:var(--green)}
+.meal-card strong{display:block;font-size:1.05rem;margin-bottom:4px}
+.meal-card span{color:var(--muted);font-size:.9rem}
+.search-row{margin:14px 0}
+.search-row input{width:100%;border:1.5px solid var(--line2);border-radius:12px;padding:13px 16px;font-size:1rem}
+.dish-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.dish{border:1px solid var(--line);background:#fff;border-radius:12px;padding:12px 14px;cursor:pointer;text-align:left;color:var(--ink)}
+.dish strong{display:block;font-size:.98rem}
+.dish span{color:var(--muted);font-size:.83rem;font-weight:700}
+.dish:hover{border-color:var(--green)}
+.dish-count{color:var(--muted);font-weight:700;font-size:.9rem;margin-top:12px}
+details{background:#fff;border:1px solid var(--line);border-radius:12px;padding:4px 16px;margin-bottom:10px}
+summary{font-weight:800;cursor:pointer;padding:10px 0}
+details p{color:var(--muted);margin:0 0 12px}
+/* Footer — dark green, like Picker Wheel */
+footer{background:#16294A;color:#DDE8D2;margin-top:30px;padding:34px 0 40px}
+.footer-grid{display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr 1fr;gap:24px}
+footer h4{color:#fff;margin:0 0 10px;font-size:.95rem}
+footer a{color:#DDE8D2;text-decoration:none;display:block;padding:3px 0;font-size:.92rem}
+footer a:hover{color:#fff;text-decoration:underline}
+footer p{margin:0 0 10px;font-size:.92rem}
+.footer-bottom{border-top:1px solid rgba(255,255,255,.18);margin-top:26px;padding-top:16px;font-size:.85rem;color:#AEBED6}
+.confetti{position:fixed;inset:0;pointer-events:none;z-index:120;overflow:hidden}
+.confetti i{position:absolute;top:-12px;width:9px;height:14px;border-radius:2px;animation:fall 1.6s ease-in forwards}
+@keyframes fall{to{transform:translateY(105vh) rotate(560deg);opacity:.2}}
+@media(max-width:960px){
+  .tool-grid{grid-template-columns:1fr}
+  .footer-grid{grid-template-columns:1fr 1fr}
+  .dish-grid{grid-template-columns:1fr 1fr}
+  .toc ol{columns:1}
+}
+@media(max-width:560px){
+  .meal-cards,.dish-grid{grid-template-columns:1fr}
+  .inputs-table-head,.inputs-row{grid-template-columns:16px minmax(0,1fr) 56px 36px 36px}
+}
+@media(prefers-reduced-motion:reduce){#wheel{transition:none}html{scroll-behavior:auto}}
+
+/* Suggestion form */
+.form-field{margin-bottom:16px}
+.form-field label{display:block;font-weight:700;margin-bottom:6px}
+.form-field input,.form-field select,.form-field textarea{width:100%;border:1.5px solid var(--line2);border-radius:10px;padding:10px 12px;font:inherit;color:var(--ink);background:#fff}
+.form-field textarea{min-height:140px;resize:vertical}
+.form-field .hint{font-size:.85rem;color:var(--muted);font-weight:400}
+</style>
+</head>
+<body>
+<header class="site-header">
+  <div class="wrap header-inner">
+    <a class="brand" href="index.html"><strong>🍽️ What to Eat Wheel</strong><span>Help you decide what to eat today · Made for the USA 🇺🇸</span></a>
+    <nav class="header-actions" aria-label="Site">
+      <a class="hbtn primary" href="index.html">🎡 Spin the Wheel</a>
+      <a class="hbtn" href="suggest.html">💡 Suggest</a>
+    </nav>
+  </div>
+</header>
+<div class="flag-strip" aria-hidden="true"></div>
+<main class="article-wrap article">
+  <p><a href="index.html">← Back to the wheel</a></p>
+  <h1>About Us</h1>
+  <section>
+    <p>What to Eat Wheel is a free tool that answers one small question with a big daily cost: <strong>what should I eat today?</strong> Set a few filters, spin the wheel, and you get one dish — with the ingredients you need to make it.</p>
+    <p>No account, no download, no sign-up. It runs entirely in your browser.</p>
+  </section>
+  <section>
+    <h2>How it works</h2>
+    <ol>
+      <li><strong>Set your filters</strong> — meal (breakfast, lunch, dinner or snack), veg or non-veg, cooking time and budget. Or tap a preset like Dinner Dilemma, Breakfast in 15 Min or American Classics to skip the thinking entirely.</li>
+      <li><strong>Spin the wheel</strong> — click the SPIN button or tap the white circle in the middle of the wheel.</li>
+      <li><strong>Cook or order the result</strong> — the result card and popup show the dish, its tags and the full ingredient list. Tap Spin Again if you want a second opinion, or Copy Result to send it to someone.</li>
+    </ol>
+  </section>
+  <section>
+    <h2>What's on the wheel</h2>
+    <p>The wheel holds <strong>100 dishes</strong>, each with a cooking time, a budget level and an ingredient list:</p>
+    <ul>
+      <li><strong>49 American</strong> — BBQ ribs, Philly cheesesteak, meatloaf, shrimp &amp; grits, jambalaya, New York-style pizza, biscuits &amp; gravy and more</li>
+      <li><strong>11 Italian, 9 Continental, 8 Healthy, 8 Chinese, 6 Mexican</strong></li>
+      <li><strong>4 Middle Eastern, 2 Japanese, 2 British, 1 Mediterranean</strong></li>
+    </ul>
+    <p>You can also add your own foods in the Inputs panel — family favorites and fridge leftovers work best. Your additions stay in your browser session only.</p>
+  </section>
+  <section>
+    <h2>Who is it for</h2>
+    <p>Anyone who has ever stood in front of an open fridge and said "I don't know what to eat" — busy weeknights, families deciding together, meal preppers, and anyone who would rather spin than scroll through recipes.</p>
+  </section>
+  <section>
+    <h2>Got an idea?</h2>
+    <p>Missing a dish, want a new preset, or found a bug? Tell us on the <a href="suggest.html">Submit a Suggestion</a> page — we read every suggestion.</p>
+  </section>
+  <p><a class="hbtn primary" href="index.html">🎡 Spin the Wheel</a></p>
+</main>
+<footer>
+  <div class="wrap">
+    <div class="footer-grid">
+      <div>
+        <h4>🍽️ What to Eat Wheel</h4>
+        <p>Help you decide what to eat today. Free, no sign-up — spin, decide, eat.</p>
+        <p>© 2026 What to Eat Wheel</p>
+      </div>
+      <div>
+        <h4>Tools</h4>
+        <a href="index.html#tool">Breakfast Wheel</a>
+        <a href="index.html#tool">Lunch Wheel</a>
+        <a href="index.html#tool">Dinner Wheel</a>
+        <a href="index.html#tool">American Classics Wheel</a>
+      </div>
+      <div>
+        <h4>Popular</h4>
+        <a href="index.html#tool">Healthy Lunch</a>
+        <a href="index.html#tool">Fast-Food Night</a>
+        <a href="index.html#tool">Budget Bites</a>
+        <a href="index.html#ideas">All Food Ideas</a>
+      </div>
+      <div>
+        <h4>About</h4>
+        <a href="about.html">About Us</a>
+        <a href="index.html#what-is">What is this wheel?</a>
+        <a href="index.html#how-to-use">How to use it</a>
+        <a href="index.html#faq">FAQ</a>
+        <a href="suggest.html">Submit a Suggestion</a>
+      </div>
+      <div>
+        <h4>Legal</h4>
+        <a href="privacy-policy.html">Privacy Policy</a>
+        <a href="terms-and-conditions.html">Terms &amp; Conditions</a>
+        <a href="sitemap.html">Sitemap</a>
+      </div>
+    </div>
+    <div class="footer-bottom">What to Eat Wheel — spin, decide, eat. Your custom foods stay in this browser session only.</div>
+  </div>
+</footer>
+</body>
+</html>

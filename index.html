@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>What to Eat Wheel — Spin &amp; Decide What to Eat Today</title>
+<meta name="description" content="Can't decide what to eat? Spin the free What to Eat Wheel — 100 dishes including American classics like BBQ ribs, Philly cheesesteak and meatloaf. Filter by breakfast, lunch or dinner, veg or non-veg, time and budget, and get a dish with its ingredients instantly.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍽️</text></svg>">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[
+{"@type":"Question","name":"What should I eat today?","acceptedAnswer":{"@type":"Answer","text":"Spin the wheel above. It picks randomly from 100 real dishes matched to your meal, diet, time and budget — so instead of a generic list, you get one decision you can act on right now, with ingredients included."}},
+{"@type":"Question","name":"What to eat for dinner when I can't decide?","acceptedAnswer":{"@type":"Answer","text":"Tap the Dinner Dilemma preset and spin. It filters the wheel to dinner dishes only. Still stuck after one spin? Spin again — or cook whatever the second spin says."}},
+{"@type":"Question","name":"Is there a veg-only option?","acceptedAnswer":{"@type":"Answer","text":"Yes. Set the Veg / Non-Veg filter to Veg and every dish on the wheel is vegetarian. There is also an American Classics preset with comfort-food favorites like meatloaf, mac & cheese and BBQ ribs."}},
+{"@type":"Question","name":"Can I add my own foods to the wheel?","acceptedAnswer":{"@type":"Answer","text":"Yes — use Add your own foods in the Inputs panel. Your items join the spin instantly for this session. Family favorites and fridge-leftover ideas work best."}},
+{"@type":"Question","name":"Is the What to Eat Wheel free?","acceptedAnswer":{"@type":"Answer","text":"Completely free, no sign-up, no download. It runs entirely in your browser as a single lightweight page."}}
+]}
+</script>
+<style>
+/* Picker Wheel layout, American edition: white header, light-blue tool band, navy + cherry red, dark-navy footer */
+:root{
+  --sage:#EAF0F7; --sage2:#DCE6F2; --card:#FFFFFF; --card2:#F2F6FB;
+  --ink:#1B2A41; --muted:#5A6B84; --line:#D3DEEB; --line2:#B9CBE0;
+  --green:#24406B; --green-d:#16294A; --yellow:#F2C230; --yellow-d:#D9A90B;
+  --tomato:#D43D2A; --tomato-d:#B3271E; --leaf:#2E7D4F; --leaf-bg:#E3F2E7;
+  --radius:12px; --shadow:0 6px 22px rgba(46,74,31,.10);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;background:#fff;color:var(--ink);line-height:1.6}
+h1,h2,h3{line-height:1.2;margin:0;color:var(--ink)}
+a{color:var(--tomato-d)}
+button,input,summary{font:inherit}
+button{cursor:pointer}
+.wrap{max-width:1180px;margin:0 auto;padding:0 18px}
+.article-wrap{max-width:860px;margin:0 auto;padding:0 18px}
+/* Header — like Picker Wheel: brand left, small buttons right */
+.site-header{background:#fff;border-bottom:1px solid var(--line)}
+.flag-strip{height:5px;background:linear-gradient(90deg,#B22234 0 33.3%,#fff 33.3% 66.6%,#3C3B6E 66.6% 100%)}
+.header-inner{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 0;flex-wrap:wrap}
+.brand{text-decoration:none;color:var(--ink);display:flex;flex-direction:column;line-height:1.15}
+.brand strong{font-size:1.25rem;letter-spacing:-.01em}
+.brand span{font-size:.82rem;color:var(--muted)}
+.header-actions{display:flex;gap:8px;flex-wrap:wrap}
+.hbtn{border:1px solid var(--line2);background:#fff;border-radius:8px;padding:9px 14px;font-weight:700;font-size:.92rem;color:var(--ink);text-decoration:none;display:inline-flex;align-items:center;gap:6px}
+.hbtn:hover{border-color:var(--green);color:var(--green-d)}
+.hbtn.primary{background:var(--green);border-color:var(--green);color:#fff}
+.hbtn.primary:hover{background:var(--green-d)}
+/* Tool band — pale sage green, wheel left, inputs panel right */
+.tool-band{background:var(--sage);border-bottom:1px solid var(--line);padding:20px 0 30px}
+.presets{display:flex;gap:8px;flex-wrap:nowrap;margin-bottom:0;overflow-x:auto;scrollbar-width:none;padding:4px 2px}
+.scroll-row{display:flex;align-items:center;gap:8px;margin-bottom:14px}
+.scroll-row.filters-row{margin-bottom:20px}
+.scroll-row .presets{flex:1;min-width:0}
+.scroll-row .filters-bar{flex:1;min-width:0}
+.scroll-arrow{flex:0 0 auto;width:32px;height:32px;border-radius:50%;border:1.5px solid var(--line2);background:#fff;color:var(--ink);font-size:1.15rem;line-height:1;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0}
+.scroll-arrow:hover{border-color:var(--green);color:var(--green)}
+.scroll-arrow:disabled{opacity:.35;cursor:default}
+.presets::-webkit-scrollbar{display:none}
+.preset{border:1.5px solid var(--line2);background:#fff;border-radius:999px;padding:9px 14px;font-weight:700;font-size:.9rem;color:var(--ink);white-space:nowrap;flex-shrink:0}
+.preset:hover{border-color:var(--green)}
+.preset.active{border-color:var(--green);background:var(--green);color:#fff}
+.filters-bar{background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:12px 14px;display:flex;gap:14px;margin-bottom:0;overflow-x:auto;scrollbar-width:none}
+.filters-bar::-webkit-scrollbar{display:none}
+.filter-group{flex:0 0 auto}
+.filter-group label{display:block;font-size:.72rem;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+.chips{display:flex;gap:6px;flex-wrap:nowrap}
+.chip{border:1.5px solid var(--line);background:#fff;border-radius:999px;padding:7px 11px;font-weight:700;font-size:.86rem;color:var(--ink);white-space:nowrap;flex-shrink:0}
+.chip.active{background:var(--ink);color:#fff;border-color:var(--ink)}
+.tool-grid{display:grid;grid-template-columns:minmax(0,1fr) 380px;gap:26px;align-items:start}
+.wheel-wrap{position:relative;width:min(520px,94vw);margin:0 auto;aspect-ratio:1/1}
+.wheel-pointer{position:absolute;left:50%;top:-4px;transform:translateX(-50%);z-index:3;width:0;height:0;border-left:15px solid transparent;border-right:15px solid transparent;border-top:26px solid var(--green-d);filter:drop-shadow(0 3px 4px rgba(0,0,0,.25))}
+#wheel{width:100%;height:100%;display:block;transition:transform 5.2s cubic-bezier(.12,.8,.08,1);filter:drop-shadow(0 12px 22px rgba(46,74,31,.20))}
+.wheel-center{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:26%;aspect-ratio:1/1;border-radius:50%;background:#fff;border:3px solid var(--line);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:8px;z-index:2;box-shadow:0 4px 14px rgba(0,0,0,.12)}
+.wheel-center strong{font-size:.95rem;line-height:1.1}
+.wheel-center small{color:var(--muted);font-weight:700;font-size:.7rem}
+.wheel-center{cursor:pointer;transition:transform .15s ease,box-shadow .15s ease}
+.wheel-center:hover{transform:translate(-50%,-50%) scale(1.05);box-shadow:0 8px 22px rgba(0,0,0,.20)}
+.wheel-center:active{transform:translate(-50%,-50%) scale(.98)}
+.wheel-center:focus-visible{outline:3px solid var(--tomato);outline-offset:2px}
+.spin-row{display:flex;gap:10px;justify-content:center;margin-top:18px;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:0;border-radius:999px;padding:13px 24px;font-weight:800;font-size:1rem;text-decoration:none}
+.btn-spin{background:var(--tomato);color:#fff;box-shadow:0 8px 18px rgba(212,61,42,.35)}
+.btn-spin:hover{background:var(--tomato-d)}
+.btn-spin:active{transform:scale(.98)}
+.btn-ghost{background:#fff;color:var(--ink);border:1.5px solid var(--line2)}
+.btn:disabled{opacity:.55;cursor:not-allowed}
+.btn-sm{padding:10px 16px;font-size:.92rem}
+.count-line{text-align:center;color:var(--muted);font-weight:700;margin-top:12px;font-size:.92rem}
+/* Right column: INPUTS card (Picker Wheel style) + result */
+.side-col{display:flex;flex-direction:column;gap:16px;min-width:0}
+.inputs-card{background:#fff;border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}
+.inputs-head{display:flex;align-items:center;gap:10px;padding:12px 14px;border-bottom:1px solid var(--line);background:var(--card2);flex-wrap:wrap}
+.inputs-head .title{font-weight:800;letter-spacing:.05em;font-size:.92rem}
+.inputs-head .count{color:var(--muted);font-weight:700;font-size:.85rem}
+.inputs-tabs{margin-left:auto;display:flex;gap:4px}
+.tab{border:1px solid var(--line2);background:#fff;border-radius:8px;padding:7px 10px;font-weight:700;font-size:.82rem;color:var(--ink)}
+.tab.active{background:var(--ink);color:#fff;border-color:var(--ink)}
+.inputs-table-head,.inputs-row{display:grid;grid-template-columns:20px minmax(0,1fr) 64px 40px 40px;gap:6px;align-items:center;padding:9px 14px}
+.inputs-table-head{font-size:.68rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--line);background:#fff}
+.inputs-list{list-style:none;margin:0;padding:0;max-height:300px;overflow-y:auto}
+.inputs-row{border-bottom:1px solid #EDF1E4;font-size:.92rem}
+.inputs-row:last-child{border-bottom:0}
+.inputs-row .dot{width:14px;height:14px;border-radius:4px;display:inline-block}
+.inputs-row .name{font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.inputs-row .meal{font-size:.78rem;font-weight:700;color:var(--muted)}
+.inputs-row.hidden-row{opacity:.45;background:#F4F7EE}
+.icon-btn{border:1px solid var(--line);background:#fff;border-radius:8px;width:32px;height:32px;font-size:1rem;line-height:1;padding:0}
+.icon-btn:hover{border-color:var(--green);color:var(--green-d)}
+.inputs-add{display:flex;gap:8px;padding:12px 14px;border-top:1px solid var(--line)}
+.inputs-add input{flex:1;min-width:0;border:1.5px solid var(--line2);border-radius:10px;padding:11px 12px;font-size:.95rem}
+.inputs-note{margin:0;padding:0 14px 12px;color:var(--muted);font-size:.85rem}
+.custom-list{display:flex;gap:6px;flex-wrap:wrap;padding:0 14px 14px}
+.custom-list:empty{display:none}
+.custom-item{background:var(--sage);border:1px solid var(--line);border-radius:999px;padding:6px 6px 6px 12px;font-weight:700;font-size:.85rem;display:inline-flex;gap:6px;align-items:center}
+.custom-item button{width:26px;height:26px;border-radius:50%;border:0;background:#fff;font-weight:800;padding:0}
+.text-mode{padding:12px 14px;border-top:1px solid var(--line)}
+.text-mode textarea{width:100%;min-height:120px;border:1.5px solid var(--line2);border-radius:10px;padding:10px 12px;font:inherit;font-size:.92rem;resize:vertical}
+.text-mode p{color:var(--muted);font-size:.85rem;margin:8px 0 10px}
+/* Result card */
+.result{border:1.5px dashed var(--line2);border-radius:var(--radius);padding:18px;background:var(--card2);min-height:190px}
+.result.filled{border-style:solid;border-color:var(--yellow-d);background:#fff}
+.result .kicker{font-size:.75rem;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:var(--tomato-d)}
+.result h3{font-size:1.7rem;margin:6px 0 8px}
+.tags{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0}
+.tag{font-size:.8rem;font-weight:800;padding:6px 10px;border-radius:999px;background:var(--sage);border:1px solid var(--line)}
+.tag.veg{background:var(--leaf-bg);color:var(--leaf);border-color:transparent}
+.tag.nonveg{background:#FDE8E0;color:#B23A17;border-color:transparent}
+.ingredients{margin-top:12px}
+.ingredients h4{margin:0 0 6px;font-size:.92rem}
+.ingredients p{margin:0;color:var(--muted)}
+.result-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
+.result-actions .btn{padding:10px 16px;font-size:.92rem}
+/* Result popup */
+.modal-overlay{position:fixed;inset:0;background:rgba(20,32,18,.55);display:flex;align-items:center;justify-content:center;z-index:100;padding:18px}
+.modal-overlay[hidden]{display:none}
+.modal{background:#fff;border-radius:20px;max-width:460px;width:100%;padding:26px 24px;box-shadow:0 24px 60px rgba(0,0,0,.35);position:relative;max-height:88vh;overflow-y:auto}
+.modal .close-x{position:absolute;top:8px;right:12px;border:0;background:none;font-size:1.7rem;line-height:1;padding:6px;cursor:pointer;color:var(--muted)}
+.modal h3{font-size:1.9rem;margin:6px 0 8px}
+.modal .result-actions{margin-top:18px}
+/* Article — narrow, Picker Wheel style */
+.article{padding:30px 0 10px}
+.popular{font-size:.95rem;color:var(--muted);margin:0 0 14px}
+.popular a{font-weight:700}
+.article h1{font-size:clamp(1.7rem,3.5vw,2.3rem);margin-bottom:18px}
+.toc{border:1px solid var(--line);border-radius:var(--radius);background:var(--card2);padding:16px 20px;margin-bottom:28px}
+.toc strong{display:block;margin-bottom:8px}
+.toc ol{margin:0;padding-left:22px;columns:2;column-gap:32px}
+.toc li{margin:4px 0}
+.toc a{color:var(--ink);text-decoration:none;font-weight:600}
+.toc a:hover{color:var(--tomato-d);text-decoration:underline}
+.article section{margin-bottom:30px}
+.article h2{font-size:1.45rem;margin-bottom:10px}
+.article h3{font-size:1.12rem;margin:20px 0 8px}
+.article p{margin:0 0 12px}
+.article ul,.article ol{margin:0 0 12px;padding-left:22px}
+.article li{margin:4px 0}
+.meal-cards{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:14px}
+.meal-card{border:1px solid var(--line);border-radius:var(--radius);padding:16px;background:#fff;text-align:left}
+.meal-card:hover{border-color:var(--green)}
+.meal-card strong{display:block;font-size:1.05rem;margin-bottom:4px}
+.meal-card span{color:var(--muted);font-size:.9rem}
+.search-row{margin:14px 0}
+.search-row input{width:100%;border:1.5px solid var(--line2);border-radius:12px;padding:13px 16px;font-size:1rem}
+.dish-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.dish{border:1px solid var(--line);background:#fff;border-radius:12px;padding:12px 14px;cursor:pointer;text-align:left;color:var(--ink)}
+.dish strong{display:block;font-size:.98rem}
+.dish span{color:var(--muted);font-size:.83rem;font-weight:700}
+.dish:hover{border-color:var(--green)}
+.dish-count{color:var(--muted);font-weight:700;font-size:.9rem;margin-top:12px}
+details{background:#fff;border:1px solid var(--line);border-radius:12px;padding:4px 16px;margin-bottom:10px}
+summary{font-weight:800;cursor:pointer;padding:10px 0}
+details p{color:var(--muted);margin:0 0 12px}
+/* Footer — dark green, like Picker Wheel */
+footer{background:#16294A;color:#DDE8D2;margin-top:30px;padding:34px 0 40px}
+.footer-grid{display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr 1fr;gap:24px}
+footer h4{color:#fff;margin:0 0 10px;font-size:.95rem}
+footer a{color:#DDE8D2;text-decoration:none;display:block;padding:3px 0;font-size:.92rem}
+footer a:hover{color:#fff;text-decoration:underline}
+footer p{margin:0 0 10px;font-size:.92rem}
+.footer-bottom{border-top:1px solid rgba(255,255,255,.18);margin-top:26px;padding-top:16px;font-size:.85rem;color:#AEBED6}
+.confetti{position:fixed;inset:0;pointer-events:none;z-index:120;overflow:hidden}
+.confetti i{position:absolute;top:-12px;width:9px;height:14px;border-radius:2px;animation:fall 1.6s ease-in forwards}
+@keyframes fall{to{transform:translateY(105vh) rotate(560deg);opacity:.2}}
+@media(max-width:960px){
+  .tool-grid{grid-template-columns:1fr}
+  .footer-grid{grid-template-columns:1fr 1fr}
+  .dish-grid{grid-template-columns:1fr 1fr}
+  .toc ol{columns:1}
+}
+@media(max-width:560px){
+  .meal-cards,.dish-grid{grid-template-columns:1fr}
+  .inputs-table-head,.inputs-row{grid-template-columns:16px minmax(0,1fr) 56px 36px 36px}
+}
+@media(prefers-reduced-motion:reduce){#wheel{transition:none}html{scroll-behavior:auto}}
+
+/* Suggestion form */
+.form-field{margin-bottom:16px}
+.form-field label{display:block;font-weight:700;margin-bottom:6px}
+.form-field input,.form-field select,.form-field textarea{width:100%;border:1.5px solid var(--line2);border-radius:10px;padding:10px 12px;font:inherit;color:var(--ink);background:#fff}
+.form-field textarea{min-height:140px;resize:vertical}
+.form-field .hint{font-size:.85rem;color:var(--muted);font-weight:400}
+</style>
+</head>
+<body>
+<header class="site-header">
+  <div class="wrap header-inner">
+    <a class="brand" href="index.html"><strong>🍽️ What to Eat Wheel</strong><span>Help you decide what to eat today · Made for the USA 🇺🇸</span></a>
+    <nav class="header-actions" aria-label="Tool actions">
+      <button class="hbtn primary" id="topNewBtn" type="button">↻ New Wheel</button>
+      <button class="hbtn" id="shareBtn" type="button">↗ Share</button>
+      <button class="hbtn" id="soundBtn" type="button">🔊 Sound On</button>
+      <a class="hbtn" href="#popular-tools">Tools</a>
+    </nav>
+  </div>
+</header>
+<div class="flag-strip" aria-hidden="true"></div>
+
+<section class="tool-band" id="tool">
+  <div class="wrap">
+    <div class="scroll-row">
+      <button class="scroll-arrow" id="presetsPrev" type="button" aria-label="Scroll presets left">‹</button>
+      <div class="presets" id="presets">
+      <button class="preset active" type="button" data-preset="any">✨ Surprise Me</button>
+      <button class="preset" type="button" data-preset="dinner">🌙 Dinner Dilemma</button>
+      <button class="preset" type="button" data-preset="breakfast15">⏱️ Breakfast in 15 Min</button>
+      <button class="preset" type="button" data-preset="healthy">🥗 Healthy Lunch</button>
+      <button class="preset" type="button" data-preset="american">🇺🇸 American Classics</button>
+      <button class="preset" type="button" data-preset="fastfood">🍔 Fast-Food Night</button>
+      <button class="preset" type="button" data-preset="budget">💸 Budget Bites</button>
+      </div>
+      <button class="scroll-arrow" id="presetsNext" type="button" aria-label="Scroll presets right">›</button>
+    </div>
+
+    <div class="scroll-row filters-row">
+      <button class="scroll-arrow" id="filtersPrev" type="button" aria-label="Scroll filters left">‹</button>
+      <div class="filters-bar" id="filtersBar">
+      <div class="filter-group"><label>Meal</label><div class="chips" data-filter="meal">
+        <button class="chip active" type="button" data-val="any">Any</button><button class="chip" type="button" data-val="Breakfast">Breakfast</button><button class="chip" type="button" data-val="Lunch">Lunch</button><button class="chip" type="button" data-val="Dinner">Dinner</button><button class="chip" type="button" data-val="Snack">Snack</button>
+      </div></div>
+      <div class="filter-group"><label>Veg / Non-Veg</label><div class="chips" data-filter="diet">
+        <button class="chip active" type="button" data-val="any">Any</button><button class="chip" type="button" data-val="veg">🟢 Veg</button><button class="chip" type="button" data-val="nonveg">🔴 Non-Veg</button>
+      </div></div>
+      <div class="filter-group"><label>Time</label><div class="chips" data-filter="time">
+        <button class="chip active" type="button" data-val="any">Any time</button><button class="chip" type="button" data-val="15">≤ 15 min</button><button class="chip" type="button" data-val="30">≤ 30 min</button><button class="chip" type="button" data-val="31">30+ min</button>
+      </div></div>
+      <div class="filter-group"><label>Budget</label><div class="chips" data-filter="budget">
+        <button class="chip active" type="button" data-val="any">Any</button><button class="chip" type="button" data-val="1">$ Cheap</button><button class="chip" type="button" data-val="2">$$ Medium</button><button class="chip" type="button" data-val="3">$$$ Treat</button>
+      </div></div>
+      </div>
+      <button class="scroll-arrow" id="filtersNext" type="button" aria-label="Scroll filters right">›</button>
+    </div>
+
+    <div class="tool-grid">
+      <div class="wheel-col">
+        <div class="wheel-wrap">
+          <div class="wheel-pointer"></div>
+          <svg id="wheel" viewBox="0 0 520 520" role="img" aria-label="Food wheel"></svg>
+          <div class="wheel-center" id="wheelCenter" role="button" tabindex="0" aria-label="Spin the wheel"><strong id="centerLabel">SPIN</strong><small>tap to spin</small></div>
+        </div>
+        <div class="spin-row">
+          <button class="btn btn-spin" id="spinBtn" type="button">🎡 SPIN THE WHEEL</button>
+          <button class="btn btn-ghost" id="shuffleBtn" type="button">🔀 New 10 Options</button>
+        </div>
+        <p class="count-line" id="countLine"></p>
+      </div>
+
+      <div class="side-col">
+        <div class="inputs-card">
+          <div class="inputs-head">
+            <span class="title">📋 INPUTS</span><span class="count" id="inputsCount"></span>
+            <span class="inputs-tabs">
+              <button class="tab active" id="mainModeTab" type="button">Main Mode</button>
+              <button class="tab" id="textModeTab" type="button">Text Mode</button>
+            </span>
+          </div>
+          <div id="mainModeBox">
+            <div class="inputs-table-head"><span></span><span>Dish</span><span>Meal</span><span>Hide</span><span>Remove</span></div>
+            <ul class="inputs-list" id="inputsList"></ul>
+          </div>
+          <div class="text-mode" id="textModeBox" hidden>
+            <textarea id="textInput" placeholder="One dish per line, e.g.&#10;BBQ Ribs&#10;Philly Cheesesteak&#10;Margherita Pizza"></textarea>
+            <p>Type or paste your dishes, one per line, then load them onto the wheel.</p>
+            <button class="btn btn-spin btn-sm" id="applyTextBtn" type="button">Load These Onto the Wheel</button>
+          </div>
+          <div class="inputs-add">
+            <input id="customInput" placeholder="Add your own food… e.g. Leftover Meatloaf" aria-label="Add your own food">
+            <button class="btn btn-spin btn-sm" id="addCustomBtn" type="button">+ Add</button>
+          </div>
+          <p class="inputs-note">Your foods join the wheel instantly, this session only.</p>
+          <div class="custom-list" id="customList"></div>
+        </div>
+
+        <div class="result" id="resultBox">
+          <div class="kicker">🎉 The wheel has decided</div>
+          <h3>What will it be?</h3>
+          <p style="color:var(--muted);margin:0">Set your filters, spin the wheel, and your answer appears here — with the ingredients you need to make it.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<main class="article-wrap article">
+  <p class="popular" id="popular-tools"><strong>Popular Tools:</strong>
+    <a href="#tool" data-preset-link="breakfast15">Breakfast Wheel</a> ·
+    <a href="#tool" data-preset-link="any">Lunch Wheel</a> ·
+    <a href="#tool" data-preset-link="dinner">Dinner Wheel</a> ·
+    <a href="#tool" data-preset-link="american">American Classics Wheel</a> ·
+    <a href="#tool" data-preset-link="healthy">Healthy Food Wheel</a> ·
+    <a href="#tool" data-preset-link="fastfood">Fast Food Wheel</a> ·
+    <a href="#tool" data-preset-link="budget">Budget Food Wheel</a>
+  </p>
+
+  <h1>What to Eat Wheel – Spin the Wheel to Decide What to Eat Today</h1>
+
+  <nav class="toc" aria-label="Table of contents">
+    <strong>Table of Contents</strong>
+    <ol>
+      <li><a href="#what-is">What is What to Eat Wheel?</a></li>
+      <li><a href="#how-to-use">How to Use This Spinner?</a></li>
+      <li><a href="#customize">Wheel Customization</a></li>
+      <li><a href="#save-share">Save &amp; Share Your Wheel</a></li>
+      <li><a href="#ideas">Browse All Food Ideas</a></li>
+      <li><a href="#meals">Breakfast, Lunch, Dinner &amp; Snacks</a></li>
+      <li><a href="#faq">Frequently Asked Questions</a></li>
+    </ol>
+  </nav>
+
+  <section id="what-is">
+    <h2>1. What is What to Eat Wheel?</h2>
+    <p>A free spin wheel built for American kitchens. Instead of scrolling through lists or asking “what should we eat?” five times, you set your meal, veg or non-veg, time and budget — spin — and get one clear answer in about 5 seconds. From BBQ ribs and Philly cheesesteaks to meatloaf, mac &amp; cheese and fresh salads, it covers the comfort food Americans actually crave.</p>
+    <p>Every result is something you can actually eat today: a real dish from 100 built-in ideas, with its main ingredients shown right away, so you can cook it or order it without a second decision.</p>
+  </section>
+
+  <section id="how-to-use">
+    <h2>2. How to Use This Spinner?</h2>
+    <p>The wheel is easy to use. Set your filters, spin, and cook or order the result. The steps below work the same on phone and laptop.</p>
+    <h3>2.1 Set Your Filters</h3>
+    <p>Pick a preset like <strong>American Classics</strong> or <strong>Dinner Dilemma</strong> to skip the thinking entirely — or set the four filters yourself: meal (breakfast, lunch, dinner, snack), veg or non-veg, time (up to 15, 30, or 30+ minutes) and budget ($ cheap, $$ medium, $$$ treat). Ten matching dishes load onto the wheel, and the Inputs panel on the right shows exactly what is on it.</p>
+    <h3>2.2 Spin the Wheel &amp; Get Your Result</h3>
+    <p>Click the <strong>SPIN</strong> button or tap the white circle in the middle of the wheel. The wheel spins, slows down, and lands on one dish. The result appears in the card next to the wheel and in a popup — the dish, its veg/non-veg tag, cuisine, time and budget, plus the ingredients you need. Tap <strong>Spin Again</strong> if you want a second opinion, or <strong>Copy Result</strong> to send it to someone.</p>
+    <h3>2.3 Add Your Own Foods</h3>
+    <p>Use <strong>Add your own foods</strong> under the Inputs panel. Your family favorites, leftover ideas, anything — they join the wheel instantly for this session. In <strong>Text Mode</strong> you can also paste a whole list, one dish per line, and load it onto the wheel at once. In the Inputs list, the eye button hides a dish from the wheel and the × button removes it from this wheel.</p>
+  </section>
+
+  <section id="customize">
+    <h2>3. Wheel Customization</h2>
+    <p>The wheel adapts to your mood, not the other way round:</p>
+    <ul>
+      <li><strong>Presets</strong> — Surprise Me, Dinner Dilemma, Breakfast in 15 Min, Healthy Lunch, American Classics, Fast-Food Night and Budget Bites.</li>
+      <li><strong>Filters</strong> — meal, diet, time and budget, combined however you like.</li>
+      <li><strong>Inputs panel</strong> — see the 10 dishes on the wheel, hide or remove any of them, and add your own.</li>
+      <li><strong>New 10 Options</strong> — reshuffles a fresh set of 10 matching dishes onto the wheel.</li>
+    </ul>
+  </section>
+
+  <section id="save-share">
+    <h2>4. Save &amp; Share Your Wheel</h2>
+    <p>There is no sign-up and nothing to save to an account. Your filters and custom foods live in this browser session only — close the page and they are gone. To share a decision, use <strong>Share</strong> in the top bar or <strong>Copy Result</strong> on the result card: it copies the dish name with its ingredients, ready to paste into any chat.</p>
+  </section>
+
+  <section id="ideas">
+    <h2>5. Browse All Food Ideas</h2>
+    <p>Every dish on the wheel, in one place. Search it, or tap any dish to see its ingredients in the result card above.</p>
+    <div class="search-row"><input id="dishSearch" type="search" placeholder="Search dishes or cuisines… e.g. cheesesteak, BBQ, pizza" aria-label="Search dishes"></div>
+    <div class="dish-grid" id="dishGrid"></div>
+    <p class="dish-count" id="dishCount"></p>
+  </section>
+
+  <section id="meals">
+    <h2>6. What to Eat for Breakfast, Lunch, Dinner &amp; Snacks</h2>
+    <p>Not sure which meal you are even deciding? Start from the meal — each one loads the wheel with dishes for that time of day.</p>
+    <div class="meal-cards">
+      <button class="meal-card" type="button" data-preset-link="breakfast15"><strong>🌅 Breakfast Wheel</strong><span>Quick breakfasts in 15 minutes or less.</span></button>
+      <button class="meal-card" type="button" data-preset-link="any"><strong>☀️ Lunch Wheel</strong><span>Midday meals, from Cobb salad to Philly cheesesteak.</span></button>
+      <button class="meal-card" type="button" data-preset-link="dinner"><strong>🌙 Dinner Wheel</strong><span>End the “what to eat for dinner?” debate.</span></button>
+      <button class="meal-card" type="button" data-preset-link="fastfood"><strong>🍿 Snack &amp; Fast-Food Wheel</strong><span>Burgers, fries, wings and nachos for snack time.</span></button>
+    </div>
+  </section>
+
+  <section id="faq">
+    <h2>7. Frequently Asked Questions</h2>
+    <details><summary>What should I eat today?</summary><p>Spin the wheel above. It picks randomly from 100 real dishes matched to your meal, diet, time and budget — so instead of a generic list, you get one decision you can act on right now, with ingredients included.</p></details>
+    <details><summary>What to eat for dinner when I can't decide?</summary><p>Tap the “Dinner Dilemma” preset and spin. It filters the wheel to dinner dishes only. Still stuck after one spin? Spin again — or remove the thinking completely and cook whatever the second spin says.</p></details>
+    <details><summary>Is there a veg-only option?</summary><p>Yes. Set the Veg / Non-Veg filter to Veg and every dish on the wheel is vegetarian. There's also an American Classics preset with comfort-food favorites like meatloaf, mac & cheese and BBQ ribs.</p></details>
+    <details><summary>Can I add my own foods to the wheel?</summary><p>Yes — use “Add your own foods” in the Inputs panel. Your items join the spin instantly for this session. Family favorites and fridge-leftover ideas work best.</p></details>
+    <details><summary>Is the What to Eat Wheel free?</summary><p>Completely free, no sign-up, no download. It runs entirely in your browser as a single lightweight page — which is also why it loads fast on any phone or laptop.</p></details>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="footer-grid">
+      <div>
+        <h4>🍽️ What to Eat Wheel</h4>
+        <p>Help you decide what to eat today. Free, no sign-up — spin, decide, eat.</p>
+        <p>© 2026 What to Eat Wheel</p>
+      </div>
+      <div>
+        <h4>Tools</h4>
+        <a href="#tool" data-preset-link="breakfast15">Breakfast Wheel</a>
+        <a href="#tool" data-preset-link="any">Lunch Wheel</a>
+        <a href="#tool" data-preset-link="dinner">Dinner Wheel</a>
+        <a href="#tool" data-preset-link="american">American Classics Wheel</a>
+      </div>
+      <div>
+        <h4>Popular</h4>
+        <a href="#tool" data-preset-link="healthy">Healthy Lunch</a>
+        <a href="#tool" data-preset-link="fastfood">Fast-Food Night</a>
+        <a href="#tool" data-preset-link="budget">Budget Bites</a>
+        <a href="#ideas">All Food Ideas</a>
+      </div>
+      <div>
+        <h4>About</h4>
+        <a href="about.html">About Us</a>
+        <a href="#what-is">What is this wheel?</a>
+        <a href="#how-to-use">How to use it</a>
+        <a href="#faq">FAQ</a>
+        <a href="suggest.html">Submit a Suggestion</a>
+      </div>
+      <div>
+        <h4>Legal</h4>
+        <a href="privacy-policy.html">Privacy Policy</a>
+        <a href="terms-and-conditions.html">Terms &amp; Conditions</a>
+        <a href="sitemap.html">Sitemap</a>
+      </div>
+    </div>
+    <div class="footer-bottom">What to Eat Wheel — spin, decide, eat. Your custom foods stay in this browser session only.</div>
+  </div>
+</footer>
+
+<div class="modal-overlay" id="resultModal" hidden role="dialog" aria-modal="true" aria-label="Spin result">
+  <div class="modal">
+    <button class="close-x" id="modalClose" type="button" aria-label="Close">×</button>
+    <div id="modalBody"></div>
+  </div>
+</div>
+
+<div class="confetti" id="confetti"></div>
+
+<script>
+// [name, meal, veg(1/0), minutes, budget 1-3, cuisine, ingredients]
+var RAW=[
+["Pancakes with Berries","Breakfast",1,20,1,"American","Flour, eggs, milk, baking powder, berries, maple syrup"],
+["Scrambled Eggs & Toast","Breakfast",0,10,1,"American","Eggs, butter, bread, milk, black pepper"],
+["Avocado Toast","Breakfast",1,10,2,"Continental","Sourdough, avocado, lemon, chilli flakes, egg (optional)"],
+["French Toast","Breakfast",1,15,1,"American","Bread, eggs, milk, cinnamon, sugar"],
+["Oatmeal Bowl","Breakfast",1,10,1,"Healthy","Oats, milk, banana, honey, nuts"],
+["Egg & Cheese Sandwich","Breakfast",0,10,1,"American","Bread, egg, cheese slice, butter, ketchup"],
+["Smoothie Bowl","Breakfast",1,10,2,"Healthy","Banana, frozen berries, yogurt, granola, honey"],
+["Shakshuka","Breakfast",0,25,2,"Middle Eastern","Eggs, tomatoes, bell pepper, onion, cumin"],
+["Waffles","Breakfast",1,25,2,"American","Flour, eggs, milk, butter, baking powder"],
+["Breakfast Burrito","Breakfast",0,20,2,"Mexican","Tortilla, eggs, cheese, beans, salsa"],
+["Fruit & Yogurt Parfait","Breakfast",1,5,1,"Healthy","Yogurt, granola, mixed fruit, honey"],
+["Chicken Burger","Lunch",0,25,2,"American","Chicken patty, bun, lettuce, cheese, mayo"],
+["Veg Fried Rice","Lunch",1,20,1,"Chinese","Rice, mixed vegetables, soy sauce, garlic, spring onion"],
+["Caesar Salad","Lunch",0,20,2,"Continental","Romaine, grilled chicken, parmesan, croutons, caesar dressing"],
+["Club Sandwich","Lunch",0,15,2,"American","Bread, chicken, egg, lettuce, tomato, mayo"],
+["Pasta Alfredo","Lunch",1,25,2,"Italian","Pasta, cream, garlic, parmesan, butter"],
+["Falafel Wrap","Lunch",1,30,1,"Middle Eastern","Chickpeas, pita, tahini, salad, garlic sauce"],
+["Grilled Fish & Rice","Lunch",0,30,3,"Continental","Fish fillet, rice, lemon, herbs, vegetables"],
+["Chicken Chow Mein","Lunch",0,25,2,"Chinese","Noodles, chicken, cabbage, soy sauce, capsicum"],
+["Quinoa Buddha Bowl","Lunch",1,25,2,"Healthy","Quinoa, chickpeas, avocado, vegetables, tahini"],
+["Beef Burger","Lunch",0,25,2,"American","Beef patty, bun, cheese, onion, burger sauce"],
+["Tuna Salad Sandwich","Lunch",0,10,2,"American","Tuna, bread, mayo, celery, lettuce"],
+["Margherita Pizza","Dinner",1,30,2,"Italian","Pizza base, tomato sauce, mozzarella, basil"],
+["Pepperoni Pizza","Dinner",0,30,2,"Italian","Pizza base, pepperoni, mozzarella, tomato sauce"],
+["Spaghetti Bolognese","Dinner",0,40,2,"Italian","Spaghetti, minced beef, tomato, onion, garlic"],
+["Veg Hakka Noodles","Dinner",1,20,1,"Chinese","Noodles, vegetables, soy sauce, vinegar, garlic"],
+["Salmon & Veggies","Dinner",0,30,3,"Continental","Salmon, broccoli, lemon, garlic butter"],
+["Tacos al Pastor","Dinner",0,35,2,"Mexican","Tortillas, marinated meat, pineapple, onion, cilantro"],
+["Chicken Manchurian & Rice","Dinner",0,35,2,"Chinese","Chicken, soy sauce, garlic, rice, spring onion"],
+["Lasagna","Dinner",0,60,3,"Italian","Pasta sheets, minced meat, béchamel, cheese, tomato"],
+["Chicken Fajitas","Dinner",0,30,2,"Mexican","Chicken, bell peppers, tortillas, onion, fajita spice"],
+["Ramen Bowl","Dinner",0,30,2,"Japanese","Ramen noodles, broth, egg, chicken, spring onion"],
+["Mushroom Risotto","Dinner",1,45,3,"Italian","Arborio rice, mushrooms, parmesan, stock, butter"],
+["Grilled Chicken Steak","Dinner",0,35,3,"Continental","Chicken breast, pepper sauce, mashed potato, vegetables"],
+["Veg Burrito Bowl","Dinner",1,25,2,"Mexican","Rice, beans, corn, avocado, salsa"],
+["Fish & Chips","Dinner",0,35,2,"British","Fish fillet, potatoes, flour batter, tartar sauce"],
+["Penne Arrabbiata","Dinner",1,25,1,"Italian","Penne, tomato, garlic, chilli, basil"],
+["Sushi Platter","Dinner",0,20,3,"Japanese","Sushi rice, salmon, nori, avocado, soy sauce"],
+["Stuffed Bell Peppers","Dinner",1,40,2,"Continental","Bell peppers, rice, vegetables, cheese, tomato sauce"],
+["Chicken Wings","Snack",0,30,1,"American","Chicken wings, hot sauce, butter, celery"],
+["French Fries","Snack",1,20,1,"American","Potatoes, salt, oil, ketchup"],
+["Nachos & Cheese","Snack",1,15,2,"Mexican","Tortilla chips, cheese, jalapeño, salsa"],
+["Spring Rolls","Snack",1,25,1,"Chinese","Roll sheets, vegetables, soy sauce, garlic"],
+["Chicken Nuggets","Snack",0,15,1,"American","Chicken, breadcrumbs, egg, spices"],
+["Hummus & Pita","Snack",1,10,2,"Middle Eastern","Chickpeas, tahini, lemon, olive oil, pita"],
+["Loaded Fries","Snack",0,25,2,"American","Fries, cheese sauce, chicken chunks, jalapeño"],
+["Cheese Omelette","Breakfast",0,10,1,"American","Eggs, cheese, butter, herbs"],
+["Banana Pancakes","Breakfast",1,15,1,"American","Banana, flour, egg, milk, honey"],
+["Muesli & Milk","Breakfast",1,5,1,"Healthy","Muesli, milk, banana, nuts"],
+["Spinach & Egg Muffins","Breakfast",0,20,2,"Healthy","Eggs, spinach, cheese, peppers"],
+["Peanut Butter Toast","Breakfast",1,5,1,"American","Bread, peanut butter, banana, honey"],
+["Chicken Sandwich","Lunch",0,15,1,"American","Bread, chicken, mayo, lettuce"],
+["Egg Fried Rice","Lunch",0,20,1,"Chinese","Rice, egg, soy sauce, spring onion"],
+["Chicken Shawarma","Lunch",0,25,2,"Middle Eastern","Chicken, pita, garlic sauce, pickles, fries"],
+["Fish Burger","Lunch",0,20,2,"American","Fish fillet, bun, tartar sauce, lettuce"],
+["Chicken Soup & Bread","Lunch",0,30,1,"Continental","Chicken, vegetables, stock, bread"],
+["Prawn Fried Rice","Lunch",0,25,3,"Chinese","Rice, prawns, egg, soy sauce, peas"],
+["Cheese Pizza Slice","Lunch",1,15,2,"Italian","Pizza base, cheese, tomato sauce, oregano"],
+["Greek Salad","Lunch",1,15,2,"Mediterranean","Cucumber, tomato, feta, olives, olive oil"],
+["Tomato Soup & Grilled Cheese","Lunch",1,25,1,"American","Tomatoes, bread, cheese, butter, cream"],
+["Mac & Cheese","Dinner",1,25,2,"American","Macaroni, cheese, milk, butter, breadcrumbs"],
+["Chicken Alfredo Pasta","Dinner",0,30,2,"Italian","Pasta, chicken, cream, parmesan, garlic"],
+["Veg Stir-Fry & Noodles","Dinner",1,20,1,"Chinese","Noodles, vegetables, soy sauce, sesame oil"],
+["Baked Potato & Beans","Dinner",1,35,1,"British","Potato, baked beans, cheese, butter"],
+["Chicken Roast Dinner","Dinner",0,60,3,"Continental","Whole chicken, potatoes, vegetables, gravy"],
+["Shrimp Pasta","Dinner",0,30,3,"Italian","Pasta, shrimp, garlic, olive oil, parsley"],
+["Quesadillas","Dinner",1,20,2,"Mexican","Tortillas, cheese, peppers, beans, salsa"],
+["Vegetable Soup","Dinner",1,30,1,"Healthy","Seasonal vegetables, stock, herbs, bread"],
+["Lamb Chops & Mash","Dinner",0,45,3,"Continental","Lamb chops, potatoes, butter, rosemary"],
+["Garlic Bread","Snack",1,15,1,"Italian","Bread, garlic butter, herbs, cheese"],
+["Cheese Balls","Snack",1,20,1,"American","Cheese, potato, breadcrumbs, herbs"],
+["Roasted Chickpeas","Snack",1,25,1,"Healthy","Chickpeas, olive oil, paprika, salt"],
+["Banana Bread Slice","Snack",1,10,1,"American","Banana bread, butter"],
+["Popcorn Bowl","Snack",1,10,1,"American","Popcorn kernels, butter, salt"],
+["Biscuits & Gravy","Breakfast",0,30,1,"American","Biscuits, sausage, milk, flour, black pepper"],
+["Bagel & Cream Cheese","Breakfast",1,5,1,"American","Bagel, cream cheese, chives, smoked salmon (optional)"],
+["Denver Omelette","Breakfast",0,20,1,"American","Eggs, ham, bell pepper, onion, cheddar cheese"],
+["Sausage & Egg Muffin","Breakfast",0,15,1,"American","English muffin, sausage patty, egg, cheese"],
+["Breakfast Hash","Breakfast",0,25,1,"American","Potatoes, eggs, bell pepper, onion, sausage"],
+["Cornbread Muffins","Breakfast",1,25,1,"American","Cornmeal, flour, butter, milk, honey"],
+["Philly Cheesesteak","Lunch",0,25,2,"American","Ribeye steak, hoagie roll, provolone, onions, peppers"],
+["BLT Sandwich","Lunch",0,15,1,"American","Bacon, lettuce, tomato, mayo, toasted bread"],
+["Reuben Sandwich","Lunch",0,20,2,"American","Corned beef, sauerkraut, Swiss cheese, rye bread, Russian dressing"],
+["Buffalo Chicken Wrap","Lunch",0,20,2,"American","Chicken, buffalo sauce, tortilla, ranch, lettuce"],
+["Cobb Salad","Lunch",0,20,2,"American","Chicken, bacon, egg, avocado, tomato, blue cheese"],
+["New England Clam Chowder","Lunch",0,35,2,"American","Clams, potatoes, cream, onion, bacon"],
+["Lobster Roll","Lunch",0,20,3,"American","Lobster, butter, hot dog bun, lemon, celery"],
+["BBQ Ribs & Coleslaw","Dinner",0,90,3,"American","Pork ribs, BBQ sauce, brown sugar, coleslaw"],
+["Fried Chicken & Waffles","Dinner",0,40,2,"American","Fried chicken, waffles, maple syrup, hot sauce"],
+["Chicken Pot Pie","Dinner",0,50,2,"American","Chicken, carrots, peas, pie crust, creamy sauce"],
+["Meatloaf & Mashed Potatoes","Dinner",0,60,1,"American","Ground beef, breadcrumbs, ketchup, potatoes, butter"],
+["Shrimp & Grits","Dinner",0,35,3,"American","Shrimp, grits, bacon, cheddar, green onions"],
+["Jambalaya","Dinner",0,45,2,"American","Rice, chicken, sausage, shrimp, Cajun seasoning"],
+["New York-Style Pizza","Dinner",0,30,2,"American","Pizza dough, mozzarella, pepperoni, tomato sauce"],
+["Chili con Carne","Dinner",0,50,1,"American","Ground beef, kidney beans, tomato, chili powder, onion"],
+["Chicago Deep-Dish Pizza","Dinner",0,45,2,"American","Pizza dough, mozzarella, tomato sauce, Italian sausage"],
+["Corn Dogs","Snack",0,20,1,"American","Hot dogs, cornmeal batter, mustard"],
+["Onion Rings","Snack",1,20,1,"American","Onions, flour, breadcrumbs, oil"],
+["Mozzarella Sticks","Snack",1,15,2,"American","Mozzarella, breadcrumbs, egg, marinara sauce"],
+["Potato Skins","Snack",0,30,2,"American","Potato skins, bacon, cheddar, sour cream, chives"]
+];
+var COLORS=["#E4572E","#F0A202","#2E7D4F","#D1495B","#3E7CB1","#EDAE49","#7FB069","#BC4B51","#F28482","#588157"];
+var state={meal:"any",diet:"any",time:"any",budget:"any"};
+var customFoods=[];
+var wheelItems=[], hiddenItems=[], rotation=0, spinning=false, soundOn=true;
+
+function $(id){return document.getElementById(id)}
+function dishes(){
+  var base=RAW.map(function(r){return{name:r[0],meal:r[1],veg:r[2]===1,time:r[3],budget:r[4],cuisine:r[5],ing:r[6],custom:false}});
+  customFoods.forEach(function(n){base.push({name:n,meal:"Any",veg:null,time:null,budget:null,cuisine:"Your Own",ing:"Your own recipe — your ingredients, your style.",custom:true})});
+  return base;
+}
+function pool(){
+  return dishes().filter(function(d){
+    if(state.meal!=="any"&&!d.custom&&d.meal!==state.meal)return false;
+    if(state.diet==="veg"&&d.veg===false)return false;
+    if(state.diet==="nonveg"&&d.veg===true)return false;
+    if(state.time!=="any"&&d.time!==null){
+      if(state.time==="15"&&d.time>15)return false;
+      if(state.time==="30"&&d.time>30)return false;
+      if(state.time==="31"&&d.time<=30)return false;
+    }
+    if(state.budget!=="any"&&d.budget!==null&&d.budget!==parseInt(state.budget))return false;
+    return true;
+  });
+}
+function shuffle(a){for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t}return a}
+// Wrap a dish name into short stacked lines (a column of words) so the
+// label fits inside its wheel segment instead of spilling over the sides.
+// maxChars depends on how many segments share the wheel: fewer segments
+// means wider segments, so longer lines are fine.
+function wrapLabel(name, maxChars){
+  var words = name.split(/\s+/);
+  var lines = [], cur = "";
+  words.forEach(function(w){
+    while(w.length > maxChars+2){
+      if(cur){ lines.push(cur); cur=""; }
+      lines.push(w.slice(0, maxChars));
+      w = w.slice(maxChars);
+    }
+    if(!cur){ cur = w; }
+    else if((cur+" "+w).length <= maxChars){ cur += " "+w; }
+    else { lines.push(cur); cur = w; }
+  });
+  if(cur) lines.push(cur);
+  if(lines.length > 4){ lines = lines.slice(0, 4); lines[3] = lines[3] + "…"; }
+  return lines;
+}
+function drawWheel(items){
+  var svg=$("wheel"); var cx=260,cy=260,r=252;
+  if(!items.length){svg.innerHTML='<circle cx="260" cy="260" r="252" fill="#EAD9C2"/><text x="260" y="255" text-anchor="middle" font-size="22" font-weight="800" fill="#6B5D52">No dishes match</text><text x="260" y="285" text-anchor="middle" font-size="15" fill="#6B5D52">Loosen a filter and try again</text>';return}
+  var n=items.length, seg=360/n, html="";
+  for(var i=0;i<n;i++){
+    var a0=(i*seg-90)*Math.PI/180, a1=((i+1)*seg-90)*Math.PI/180;
+    var x0=cx+r*Math.cos(a0),y0=cy+r*Math.sin(a0),x1=cx+r*Math.cos(a1),y1=cy+r*Math.sin(a1);
+    html+='<path d="M'+cx+','+cy+' L'+x0.toFixed(1)+','+y0.toFixed(1)+' A'+r+','+r+' 0 0 1 '+x1.toFixed(1)+','+y1.toFixed(1)+' Z" fill="'+COLORS[i%COLORS.length]+'" stroke="#FFF8EE" stroke-width="3"/>';
+    var mid=(i*seg+seg/2-90), rad=mid*Math.PI/180, tx=cx+168*Math.cos(rad), ty=cy+168*Math.sin(rad);
+    // smaller text on crowded wheels, words stacked in a column, not one long row
+    var fontSize = n<=3 ? 15 : n<=5 ? 13.5 : 12;
+    var maxChars = n<=3 ? 14 : n<=5 ? 12 : 10;
+    var lines = wrapLabel(items[i].name, maxChars);
+    var lineH = fontSize + 3;
+    var topDy = (-((lines.length-1)*lineH/2)).toFixed(1);
+    var labelHtml = '<text x="'+tx.toFixed(1)+'" y="'+ty.toFixed(1)+'" transform="rotate('+(mid+90)+' '+tx.toFixed(1)+' '+ty.toFixed(1)+')" text-anchor="middle" dominant-baseline="middle" font-size="'+fontSize+'" font-weight="800" fill="#fff" style="text-shadow:0 1px 2px rgba(0,0,0,.3)">';
+    lines.forEach(function(ln, li){
+      labelHtml += '<tspan x="'+tx.toFixed(1)+'" dy="'+(li===0 ? topDy : lineH)+'">'+ln.replace(/&/g,"&amp;")+'</tspan>';
+    });
+    html += labelHtml + '</text>';
+  }
+  html+='<circle cx="260" cy="260" r="252" fill="none" stroke="#211812" stroke-opacity=".12" stroke-width="2"/>';
+  svg.innerHTML=html;
+}
+function renderInputs(){
+  var list=$("inputsList"); list.innerHTML="";
+  wheelItems.forEach(function(d,i){
+    var li=document.createElement("li"); li.className="inputs-row";
+    li.innerHTML='<span class="dot" style="background:'+COLORS[i%COLORS.length]+'"></span><span class="name" title="'+d.name.replace(/"/g,"")+'">'+d.name+'</span><span class="meal">'+d.meal+'</span>';
+    var hide=document.createElement("button"); hide.className="icon-btn"; hide.type="button"; hide.textContent="👁️"; hide.title="Hide from wheel"; hide.setAttribute("aria-label","Hide "+d.name);
+    hide.addEventListener("click",function(){hiddenItems.push(d);wheelItems.splice(i,1);drawWheel(wheelItems);renderInputs();updateCount()});
+    var del=document.createElement("button"); del.className="icon-btn"; del.type="button"; del.textContent="×"; del.title="Remove from this wheel"; del.setAttribute("aria-label","Remove "+d.name);
+    del.addEventListener("click",function(){wheelItems.splice(i,1);drawWheel(wheelItems);renderInputs();updateCount()});
+    li.appendChild(hide); li.appendChild(del); list.appendChild(li);
+  });
+  hiddenItems.forEach(function(d){
+    var li=document.createElement("li"); li.className="inputs-row hidden-row";
+    li.innerHTML='<span class="dot" style="background:#B9C8AC"></span><span class="name">'+d.name+' (hidden)</span><span class="meal">'+d.meal+'</span>';
+    var show=document.createElement("button"); show.className="icon-btn"; show.type="button"; show.textContent="👁️‍🗨️"; show.title="Show on wheel"; show.setAttribute("aria-label","Show "+d.name);
+    show.addEventListener("click",function(){hiddenItems.splice(hiddenItems.indexOf(d),1);wheelItems.push(d);drawWheel(wheelItems);renderInputs();updateCount()});
+    var blank=document.createElement("span");
+    li.appendChild(show); li.appendChild(blank); list.appendChild(li);
+  });
+  $("inputsCount").textContent=wheelItems.length+" on wheel"+(hiddenItems.length?" · "+hiddenItems.length+" hidden":"");
+}
+function updateCount(){
+  var p=pool().length;
+  $("countLine").textContent=p+" dishes match your filters · "+wheelItems.length+" are on the wheel right now"+(hiddenItems.length?" · "+hiddenItems.length+" hidden":"");
+}
+function buildWheel(){
+  var p=shuffle(pool().slice());
+  wheelItems=p.slice(0,Math.min(10,p.length)); hiddenItems=[];
+  drawWheel(wheelItems); renderInputs(); updateCount();
+}
+function buildWheelFrom(items,countText){
+  wheelItems=items.slice(); hiddenItems=[];
+  drawWheel(wheelItems); renderInputs();
+  if(countText)$("countLine").textContent=countText;
+  else $("countLine").textContent=wheelItems.length+" dishes on the wheel";
+}
+function tickSound(){
+  if(!soundOn)return;
+  try{
+    if(!window._ac)window._ac=new (window.AudioContext||window.webkitAudioContext)();
+    if(window._ac.state==="suspended")window._ac.resume();
+    var o=window._ac.createOscillator(),g=window._ac.createGain();
+    o.frequency.value=880;g.gain.setValueAtTime(.06,window._ac.currentTime);g.gain.exponentialRampToValueAtTime(.001,window._ac.currentTime+.05);
+    o.connect(g);g.connect(window._ac.destination);o.start();o.stop(window._ac.currentTime+.06);
+  }catch(e){}
+}
+function confetti(){
+  if(window.matchMedia("(prefers-reduced-motion: reduce)").matches)return;
+  var c=$("confetti");c.innerHTML="";
+  for(var i=0;i<36;i++){var el=document.createElement("i");el.style.left=Math.random()*100+"%";el.style.background=COLORS[i%COLORS.length];el.style.animationDelay=(Math.random()*.3)+"s";el.style.transform="rotate("+(Math.random()*360)+"deg)";c.appendChild(el)}
+  setTimeout(function(){c.innerHTML=""},2200);
+}
+function copyTextFor(d){ return "What to eat? "+d.name+" ("+d.cuisine+") — Ingredients: "+d.ing; }
+function wireCopy(btn, d){
+  if(!btn) return;
+  btn.addEventListener("click", function(){
+    if(navigator.clipboard) navigator.clipboard.writeText(copyTextFor(d));
+    btn.textContent = "✓ Copied!";
+  });
+}
+function openResultModal(){
+  var m=$("resultModal"); m.hidden=false;
+  if(document.body) document.body.style.overflow="hidden";
+  var c=$("modalClose"); if(c && c.focus) c.focus();
+}
+function closeResultModal(){
+  var m=$("resultModal"); if(m) m.hidden=true;
+  if(document.body) document.body.style.overflow="";
+}
+function showResult(d){
+  var box=$("resultBox"); box.classList.add("filled");
+  var dietTag=d.veg===true?'<span class="tag veg">🟢 Veg</span>':(d.veg===false?'<span class="tag nonveg">🔴 Non-Veg</span>':'<span class="tag">⭐ Your Own</span>');
+  var meta=d.custom?'<span class="tag">Your added food</span>':'<span class="tag">⏱️ '+d.time+' min</span><span class="tag">'+"$".repeat(d.budget)+' budget</span><span class="tag">'+d.meal+'</span>';
+  var body='<div class="kicker">🎉 The wheel has decided</div><h3>'+d.name+'</h3>'
+    +'<div class="tags">'+dietTag+'<span class="tag">'+d.cuisine+'</span>'+meta+'</div>'
+    +'<div class="ingredients"><h4>🧾 You need these ingredients:</h4><p>'+d.ing+'</p></div>';
+  box.innerHTML = body
+    +'<div class="result-actions"><button class="btn btn-spin" onclick="spin()">🎡 Spin Again</button>'
+    +'<button class="btn btn-ghost" id="copyBtn">📋 Copy Result</button></div>';
+  $("centerLabel").innerHTML=d.name.length>16?d.name.slice(0,15)+"…":d.name;
+  wireCopy($("copyBtn"), d);
+  // same result in a popup
+  $("modalBody").innerHTML = body
+    +'<div class="result-actions"><button class="btn btn-spin" id="spinAgainModal">🎡 Spin Again</button>'
+    +'<button class="btn btn-ghost" id="copyBtnModal">📋 Copy Result</button>'
+    +'<button class="btn btn-ghost" id="modalCloseBtn">Close</button></div>';
+  wireCopy($("copyBtnModal"), d);
+  $("spinAgainModal").addEventListener("click", function(){ closeResultModal(); spin(); });
+  $("modalCloseBtn").addEventListener("click", closeResultModal);
+  openResultModal();
+  confetti();
+}
+function spin(){
+  if(spinning||!wheelItems.length)return;
+  spinning=true;$("spinBtn").disabled=true;
+  var n=wheelItems.length, seg=360/n;
+  var winIdx=Math.floor(Math.random()*n);
+  var centre=winIdx*seg+seg/2;
+  var targetMod=(360-(centre%360))%360;
+  var currentMod=((rotation%360)+360)%360;
+  var delta=((targetMod-currentMod)+360)%360;
+  rotation+=360*6+delta;
+  var wheel=$("wheel"); wheel.style.transform="rotate("+rotation+"deg)";
+  var ticks=0; var iv=setInterval(function(){ticks++; if(ticks%3===0)tickSound(); if(ticks>40)clearInterval(iv)},110);
+  setTimeout(function(){
+    clearInterval(iv); spinning=false;$("spinBtn").disabled=false;
+    showResult(wheelItems[winIdx]);
+  },5300);
+}
+$("spinBtn").addEventListener("click",spin);
+// the white circle in the middle of the wheel spins it too
+$("wheelCenter").addEventListener("click",function(){ spin(); });
+$("wheelCenter").addEventListener("keydown",function(e){
+  if(e.key==="Enter"||e.key===" "){ e.preventDefault(); spin(); }
+});
+// result popup: close via X, backdrop click, or Escape
+$("modalClose").addEventListener("click",closeResultModal);
+$("resultModal").addEventListener("click",function(e){ if(e.target===$("resultModal")) closeResultModal(); });
+document.addEventListener("keydown",function(e){ if(e.key==="Escape") closeResultModal(); });
+$("shuffleBtn").addEventListener("click",function(){if(!spinning)buildWheel()});
+$("topNewBtn").addEventListener("click",function(){if(!spinning){buildWheel();document.getElementById("tool").scrollIntoView({behavior:"smooth"})}});
+$("soundBtn").addEventListener("click",function(){soundOn=!soundOn;this.textContent=soundOn?"🔊 Sound On":"🔇 Sound Off"});
+$("shareBtn").addEventListener("click",function(){
+  var txt="What to Eat Wheel — spin and decide what to eat today! "+location.href;
+  if(navigator.clipboard)navigator.clipboard.writeText(txt);
+  var b=this; b.textContent="✓ Link Copied"; setTimeout(function(){b.textContent="↗ Share"},2000);
+});
+
+// Filters
+document.querySelectorAll(".chips").forEach(function(group){
+  group.addEventListener("click",function(e){
+    var btn=e.target.closest(".chip"); if(!btn)return;
+    group.querySelectorAll(".chip").forEach(function(c){c.classList.remove("active")});
+    btn.classList.add("active");
+    state[group.dataset.filter]=btn.dataset.val;
+    document.querySelectorAll(".preset").forEach(function(p){p.classList.remove("active")});
+    if(!spinning)buildWheel();
+  });
+});
+function setFilter(name,val){
+  state[name]=val;
+  document.querySelectorAll('.chips[data-filter="'+name+'"] .chip').forEach(function(c){c.classList.toggle("active",c.dataset.val===String(val))});
+}
+var PRESETS={
+  any:{meal:"any",diet:"any",time:"any",budget:"any"},
+  dinner:{meal:"Dinner",diet:"any",time:"any",budget:"any"},
+  breakfast15:{meal:"Breakfast",diet:"any",time:"15",budget:"any"},
+  healthy:{meal:"Lunch",diet:"veg",time:"30",budget:"any"},
+  american:{meal:"any",diet:"any",time:"any",budget:"any"},
+  fastfood:{meal:"any",diet:"any",time:"30",budget:"any"},
+  budget:{meal:"any",diet:"any",time:"any",budget:"1"}
+};
+function applyPreset(key){
+  var pr=PRESETS[key]; if(!pr)return;
+  document.querySelectorAll(".preset").forEach(function(p){p.classList.toggle("active",p.dataset.preset===key)});
+  if(key==="american"){
+    setFilter("meal","any");setFilter("diet","any");setFilter("time","any");setFilter("budget","any");
+    var am=shuffle(dishes().filter(function(d){return d.cuisine==="American"}));
+    buildWheelFrom(am.slice(0,10),am.length+" American classics · 10 are on the wheel");
+    return;
+  }
+  if(key==="fastfood"){
+    setFilter("meal","any");setFilter("diet","any");setFilter("time","30");setFilter("budget","any");
+    var ff=shuffle(dishes().filter(function(d){return /Burger|Pizza|Fries|Nuggets|Wings|Nachos|Tacos/.test(d.name)}));
+    buildWheelFrom(ff.slice(0,10),ff.length+" fast-food favorites · "+Math.min(10,ff.length)+" on the wheel");
+    return;
+  }
+  setFilter("meal",pr.meal);setFilter("diet",pr.diet);setFilter("time",pr.time);setFilter("budget",pr.budget);
+  if(!spinning)buildWheel();
+}
+$("presets").addEventListener("click",function(e){
+  var btn=e.target.closest(".preset"); if(!btn)return;
+  applyPreset(btn.dataset.preset);
+});
+document.querySelectorAll("[data-preset-link]").forEach(function(el){
+  el.addEventListener("click",function(e){
+    e.preventDefault();
+    applyPreset(el.dataset.presetLink);
+    document.getElementById("tool").scrollIntoView({behavior:"smooth"});
+  });
+});
+// Main / Text mode tabs
+$("mainModeTab").addEventListener("click",function(){
+  $("mainModeTab").classList.add("active");$("textModeTab").classList.remove("active");
+  $("mainModeBox").hidden=false;$("textModeBox").hidden=true;
+});
+$("textModeTab").addEventListener("click",function(){
+  $("textModeTab").classList.add("active");$("mainModeTab").classList.remove("active");
+  $("mainModeBox").hidden=true;$("textModeBox").hidden=false;
+  $("textInput").value=wheelItems.map(function(d){return d.name}).join("\n");
+});
+$("applyTextBtn").addEventListener("click",function(){
+  var lines=$("textInput").value.split("\n").map(function(s){return s.trim()}).filter(Boolean);
+  if(!lines.length)return;
+  var items=lines.map(function(n){return{name:n,meal:"Any",veg:null,time:null,budget:null,cuisine:"Your Own",ing:"Your own recipe — your ingredients, your style.",custom:true}});
+  buildWheelFrom(items.slice(0,20),items.length+" dishes from your list · "+Math.min(20,items.length)+" on the wheel");
+});
+// Custom foods
+function renderCustom(){
+  var list=$("customList"); list.innerHTML="";
+  customFoods.forEach(function(name,idx){
+    var s=document.createElement("span");s.className="custom-item";s.textContent=name;
+    var b=document.createElement("button");b.textContent="×";b.setAttribute("aria-label","Remove "+name);
+    b.addEventListener("click",function(){customFoods.splice(idx,1);renderCustom();if(!spinning)buildWheel()});
+    s.appendChild(b);list.appendChild(s);
+  });
+}
+function addCustom(){
+  var inp=$("customInput"), v=inp.value.trim(); if(!v)return;
+  customFoods.push(v); inp.value=""; renderCustom(); if(!spinning)buildWheel();
+}
+$("addCustomBtn").addEventListener("click",addCustom);
+$("customInput").addEventListener("keydown",function(e){if(e.key==="Enter")addCustom()});
+
+// Dish grid
+function renderGrid(q){
+  q=(q||"").toLowerCase();
+  var all=RAW.filter(function(r){return r[0].toLowerCase().indexOf(q)>-1||r[5].toLowerCase().indexOf(q)>-1});
+  var grid=$("dishGrid"); grid.innerHTML="";
+  all.slice(0,200).forEach(function(r){
+    var b=document.createElement("button");b.className="dish";
+    b.innerHTML="<strong>"+r[0]+"</strong><span>"+(r[2]===1?"🟢 Veg":"🔴 Non-Veg")+" · "+r[1]+" · "+r[3]+" min · "+r[5]+"</span>";
+    b.addEventListener("click",function(){showResult({name:r[0],meal:r[1],veg:r[2]===1,time:r[3],budget:r[4],cuisine:r[5],ing:r[6],custom:false});window.scrollTo({top:$("tool").offsetTop-10,behavior:"smooth"})});
+    grid.appendChild(b);
+  });
+  $("dishCount").textContent="Showing "+Math.min(200,all.length)+" of "+all.length+" matching dishes · "+RAW.length+" total on the wheel";
+}
+$("dishSearch").addEventListener("input",function(e){renderGrid(e.target.value)});
+
+// side arrows for the one-line scroll rows (presets + filters)
+function wireScrollRow(scrollerId, prevId, nextId){
+  var el=$(scrollerId), prev=$(prevId), next=$(nextId);
+  if(!el||!prev||!next) return;
+  function update(){
+    var overflow = el.scrollWidth > el.clientWidth + 1;
+    prev.style.visibility = overflow ? "visible" : "hidden";
+    next.style.visibility = overflow ? "visible" : "hidden";
+    prev.disabled = el.scrollLeft <= 0;
+    next.disabled = el.scrollLeft + el.clientWidth >= el.scrollWidth - 1;
+  }
+  function go(dir){ el.scrollBy({left: dir * Math.max(200, el.clientWidth * 0.7), behavior: "smooth"}); }
+  prev.addEventListener("click", function(){ go(-1); });
+  next.addEventListener("click", function(){ go(1); });
+  el.addEventListener("scroll", update);
+  if(window.addEventListener) window.addEventListener("resize", update);
+  update();
+}
+wireScrollRow("presets", "presetsPrev", "presetsNext");
+wireScrollRow("filtersBar", "filtersPrev", "filtersNext");
+
+buildWheel();
+renderGrid("");
+</script>
+</body>
+</html>
