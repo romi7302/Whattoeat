@@ -18,7 +18,7 @@
 <style>
 /* Picker Wheel layout, American edition: white header, light-blue tool band, navy + cherry red, dark-navy footer */
 :root{
-  --sage:#EAF0F7; --sage2:#DCE6F2; --card:#FFFFFF; --card2:#F2F6FB;
+  --sage:#D8DED4; --sage2:#CBD3C6; --card:#FFFFFF; --card2:#F2F6FB;
   --ink:#1B2A41; --muted:#5A6B84; --line:#D3DEEB; --line2:#B9CBE0;
   --green:#24406B; --green-d:#16294A; --yellow:#F2C230; --yellow-d:#D9A90B;
   --tomato:#D43D2A; --tomato-d:#B3271E; --leaf:#2E7D4F; --leaf-bg:#E3F2E7;
@@ -68,14 +68,11 @@ button{cursor:pointer}
 .chip.active{background:var(--ink);color:#fff;border-color:var(--ink)}
 .tool-grid{display:grid;grid-template-columns:minmax(0,1fr) 380px;gap:26px;align-items:start}
 .wheel-wrap{position:relative;width:min(520px,94vw);margin:0 auto;aspect-ratio:1/1}
-.wheel-pointer{position:absolute;left:50%;top:-4px;transform:translateX(-50%);z-index:3;width:0;height:0;border-left:15px solid transparent;border-right:15px solid transparent;border-top:26px solid var(--green-d);filter:drop-shadow(0 3px 4px rgba(0,0,0,.25))}
 #wheel{width:100%;height:100%;display:block;transition:transform 5.2s cubic-bezier(.12,.8,.08,1);filter:drop-shadow(0 12px 22px rgba(46,74,31,.20))}
-.wheel-center{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:26%;aspect-ratio:1/1;border-radius:50%;background:#fff;border:3px solid var(--line);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:8px;z-index:2;box-shadow:0 4px 14px rgba(0,0,0,.12)}
-.wheel-center strong{font-size:.95rem;line-height:1.1}
-.wheel-center small{color:var(--muted);font-weight:700;font-size:.7rem}
-.wheel-center{cursor:pointer;transition:transform .15s ease,box-shadow .15s ease}
-.wheel-center:hover{transform:translate(-50%,-50%) scale(1.05);box-shadow:0 8px 22px rgba(0,0,0,.20)}
-.wheel-center:active{transform:translate(-50%,-50%) scale(.98)}
+.wheel-center{position:absolute;left:50%;top:50%;width:96px;height:96px;margin:-48px 0 0 -48px;background:#202020;border:3px solid #fff;border-radius:0 50% 50% 50%;transform:rotate(45deg);display:flex;align-items:center;justify-content:center;z-index:2;box-shadow:0 6px 18px rgba(0,0,0,.28);cursor:pointer;transition:transform .15s ease,box-shadow .15s ease}
+.wheel-center .hub-text{transform:rotate(-45deg);color:#fff;font-weight:900;font-size:1.05rem;letter-spacing:.06em}
+.wheel-center:hover{transform:rotate(45deg) scale(1.06);box-shadow:0 10px 26px rgba(0,0,0,.32)}
+.wheel-center:active{transform:rotate(45deg) scale(.97)}
 .wheel-center:focus-visible{outline:3px solid var(--tomato);outline-offset:2px}
 .spin-row{display:flex;gap:10px;justify-content:center;margin-top:18px;flex-wrap:wrap}
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:0;border-radius:999px;padding:13px 24px;font-weight:800;font-size:1rem;text-decoration:none}
@@ -253,9 +250,8 @@ footer p{margin:0 0 10px;font-size:.92rem}
     <div class="tool-grid">
       <div class="wheel-col">
         <div class="wheel-wrap">
-          <div class="wheel-pointer"></div>
           <svg id="wheel" viewBox="0 0 520 520" role="img" aria-label="Food wheel"></svg>
-          <div class="wheel-center" id="wheelCenter" role="button" tabindex="0" aria-label="Spin the wheel"><strong id="centerLabel">SPIN</strong><small>tap to spin</small></div>
+          <div class="wheel-center" id="wheelCenter" role="button" tabindex="0" aria-label="Spin the wheel"><span class="hub-text" id="centerLabel">SPIN</span></div>
         </div>
         <div class="spin-row">
           <button class="btn btn-spin" id="spinBtn" type="button">🎡 SPIN THE WHEEL</button>
@@ -542,7 +538,7 @@ var RAW=[
 ["Mozzarella Sticks","Snack",1,15,2,"American","Mozzarella, breadcrumbs, egg, marinara sauce"],
 ["Potato Skins","Snack",0,30,2,"American","Potato skins, bacon, cheddar, sour cream, chives"]
 ];
-var COLORS=["#E4572E","#F0A202","#2E7D4F","#D1495B","#3E7CB1","#EDAE49","#7FB069","#BC4B51","#F28482","#588157"];
+var COLORS=["#2B580C","#AFA939","#F7B71D","#FDEF96"];
 var state={meal:"any",diet:"any",time:"any",budget:"any"};
 var customFoods=[];
 var wheelItems=[], hiddenItems=[], rotation=0, spinning=false, soundOn=true;
@@ -597,18 +593,15 @@ function drawWheel(items){
     var a0=(i*seg-90)*Math.PI/180, a1=((i+1)*seg-90)*Math.PI/180;
     var x0=cx+r*Math.cos(a0),y0=cy+r*Math.sin(a0),x1=cx+r*Math.cos(a1),y1=cy+r*Math.sin(a1);
     html+='<path d="M'+cx+','+cy+' L'+x0.toFixed(1)+','+y0.toFixed(1)+' A'+r+','+r+' 0 0 1 '+x1.toFixed(1)+','+y1.toFixed(1)+' Z" fill="'+COLORS[i%COLORS.length]+'" stroke="#FFF8EE" stroke-width="3"/>';
-    var mid=(i*seg+seg/2-90), rad=mid*Math.PI/180, tx=cx+168*Math.cos(rad), ty=cy+168*Math.sin(rad);
-    // smaller text on crowded wheels, words stacked in a column, not one long row
+    var mid=(i*seg+seg/2-90), rad=mid*Math.PI/180, lx=cx+236*Math.cos(rad), ly=cy+236*Math.sin(rad);
+    // single-line radial label, like the live wheel: reads outward along the spoke
     var fontSize = n<=3 ? 15 : n<=5 ? 13.5 : 12;
-    var maxChars = n<=3 ? 14 : n<=5 ? 12 : 10;
-    var lines = wrapLabel(items[i].name, maxChars);
-    var lineH = fontSize + 3;
-    var topDy = (-((lines.length-1)*lineH/2)).toFixed(1);
-    var labelHtml = '<text x="'+tx.toFixed(1)+'" y="'+ty.toFixed(1)+'" transform="rotate('+(mid+90)+' '+tx.toFixed(1)+' '+ty.toFixed(1)+')" text-anchor="middle" dominant-baseline="middle" font-size="'+fontSize+'" font-weight="800" fill="#fff" style="text-shadow:0 1px 2px rgba(0,0,0,.3)">';
-    lines.forEach(function(ln, li){
-      labelHtml += '<tspan x="'+tx.toFixed(1)+'" dy="'+(li===0 ? topDy : lineH)+'">'+ln.replace(/&/g,"&amp;")+'</tspan>';
-    });
-    html += labelHtml + '</text>';
+    var labelFill=(i%4===0)?"#fff":"#202020";
+    var labelShadow=(i%4===0)?' style="text-shadow:0 1px 2px rgba(0,0,0,.3)"':"";
+    var labelName=items[i].name;
+    if(labelName.length>15)labelName=labelName.slice(0,14)+"…";
+    var labelHtml = '<text x="'+lx.toFixed(1)+'" y="'+ly.toFixed(1)+'" transform="rotate('+mid+' '+lx.toFixed(1)+' '+ly.toFixed(1)+')" text-anchor="end" dominant-baseline="middle" font-size="'+fontSize+'" font-weight="800" fill="'+labelFill+'"'+labelShadow+'>'+labelName.replace(/&/g,"&amp;")+'</text>';
+    html += labelHtml;
   }
   html+='<circle cx="260" cy="260" r="252" fill="none" stroke="#211812" stroke-opacity=".12" stroke-width="2"/>';
   svg.innerHTML=html;
@@ -692,7 +685,6 @@ function showResult(d){
   box.innerHTML = body
     +'<div class="result-actions"><button class="btn btn-spin" onclick="spin()">🎡 Spin Again</button>'
     +'<button class="btn btn-ghost" id="copyBtn">📋 Copy Result</button></div>';
-  $("centerLabel").innerHTML=d.name.length>16?d.name.slice(0,15)+"…":d.name;
   wireCopy($("copyBtn"), d);
   // same result in a popup
   $("modalBody").innerHTML = body
