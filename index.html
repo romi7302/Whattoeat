@@ -85,6 +85,27 @@ button{cursor:pointer}
 .btn:disabled{opacity:.55;cursor:not-allowed}
 .btn-sm{padding:10px 16px;font-size:.92rem}
 .count-line{text-align:center;color:var(--muted);font-weight:700;margin-top:12px;font-size:.92rem}
+/* Wheel options row (Picker Wheel style controls) */
+.wheel-options{display:flex;flex-wrap:wrap;gap:8px 18px;align-items:center;justify-content:center;margin-top:14px;font-size:.9rem;color:var(--muted);font-weight:700}
+.wheel-options .opt{display:inline-flex;align-items:center;gap:7px}
+.wheel-options input[type="range"]{width:110px;accent-color:var(--tomato)}
+.wheel-options select{border:1.5px solid var(--line2);border-radius:8px;padding:5px 8px;font-weight:700;font-size:.88rem;background:#fff;color:var(--ink)}
+.wheel-options input[type="checkbox"]{width:17px;height:17px;accent-color:#2B580C}
+.wheel-wrap:fullscreen{width:min(92vh,92vw);background:var(--sage);display:flex;align-items:center;justify-content:center}
+/* Inputs toolbar (Shuffle / A to Z / Remove All) */
+.inputs-tools{display:flex;gap:8px;padding:10px 14px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.mini-btn{border:1.5px solid var(--line2);background:#fff;border-radius:8px;padding:7px 12px;font-weight:700;font-size:.85rem;color:var(--ink)}
+.mini-btn:hover{border-color:var(--green);color:var(--green-d)}
+.mini-btn.danger:hover{border-color:var(--tomato-d);color:var(--tomato-d)}
+/* Picked-so-far results card (Picker Wheel "All Results" panel) */
+.results-card{background:#fff;border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}
+.results-card[hidden]{display:none}
+.results-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 14px;border-bottom:1px solid var(--line);background:var(--card2)}
+.results-head .title{font-weight:800;letter-spacing:.05em;font-size:.92rem}
+.results-list{list-style:none;margin:0;padding:6px 14px 12px;max-height:180px;overflow-y:auto}
+.results-list li{display:flex;justify-content:space-between;gap:10px;padding:7px 0;border-bottom:1px solid #EDF1E4;font-size:.92rem;font-weight:700}
+.results-list li:last-child{border-bottom:0}
+.results-list .when{color:var(--muted);font-size:.8rem;font-weight:700;white-space:nowrap}
 /* Right column: INPUTS card (Picker Wheel style) + result */
 .side-col{display:flex;flex-direction:column;gap:16px;min-width:0}
 .inputs-card{background:#fff;border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}
@@ -328,13 +349,20 @@ footer p{margin:0 0 10px;font-size:.92rem}
 
     <div class="tool-grid">
       <div class="wheel-col">
-        <div class="wheel-wrap">
+        <div class="wheel-wrap" id="wheelWrap">
           <svg id="wheel" viewBox="0 0 520 520" role="img" aria-label="Food wheel"></svg>
           <div class="wheel-center" id="wheelCenter" role="button" tabindex="0" aria-label="Spin the wheel"><span class="hub-text" id="centerLabel">SPIN</span></div>
         </div>
         <div class="spin-row">
           <button class="btn btn-spin" id="spinBtn" type="button">SPIN THE WHEEL</button>
           <button class="btn btn-ghost" id="shuffleBtn" type="button">New 10 Options</button>
+        </div>
+        <div class="wheel-options">
+          <label class="opt">Volume <input type="range" id="volumeRange" min="0" max="100" value="70" aria-label="Volume"></label>
+          <label class="opt">Speed <select id="speedSelect" aria-label="Spin speed"><option value="slow">Slow</option><option value="normal" selected>Normal</option><option value="fast">Fast</option></select></label>
+          <span class="opt" id="spinCountLabel">Spins: 0</span>
+          <label class="opt"><input type="checkbox" id="hideWinnerChk"> Hide winner after spin</label>
+          <button class="btn btn-ghost btn-sm" id="fullscreenBtn" type="button">Fullscreen</button>
         </div>
         <p class="count-line" id="countLine"></p>
       </div>
@@ -347,6 +375,11 @@ footer p{margin:0 0 10px;font-size:.92rem}
               <button class="tab active" id="mainModeTab" type="button">Main Mode</button>
               <button class="tab" id="textModeTab" type="button">Text Mode</button>
             </span>
+          </div>
+          <div class="inputs-tools">
+            <button class="mini-btn" id="shuffleInputsBtn" type="button">Shuffle</button>
+            <button class="mini-btn" id="sortAZBtn" type="button">A to Z</button>
+            <button class="mini-btn danger" id="removeAllBtn" type="button">Remove All</button>
           </div>
           <div id="mainModeBox">
             <div class="inputs-table-head"><span></span><span>Dish</span><span>Meal</span><span>Hide</span><span>Remove</span></div>
@@ -369,6 +402,10 @@ footer p{margin:0 0 10px;font-size:.92rem}
           <div class="kicker">The wheel has decided</div>
           <h3>What will it be?</h3>
           <p style="color:var(--muted);margin:0">Set your filters, spin the wheel, and your answer appears here — with the ingredients you need to make it.</p>
+        </div>
+        <div class="results-card" id="resultsCard" hidden>
+          <div class="results-head"><span class="title">Picked so far</span><button class="mini-btn" id="clearResultsBtn" type="button">Clear</button></div>
+          <ul class="results-list" id="resultsList"></ul>
         </div>
       </div>
     </div>
@@ -753,7 +790,7 @@ var RAW=[
 var COLORS=["#2B580C","#AFA939","#F7B71D","#FDEF96"];
 var state={meal:"any",diet:"any",time:"any",budget:"any"};
 var customFoods=[];
-var wheelItems=[], hiddenItems=[], rotation=0, spinning=false, soundOn=true;
+var wheelItems=[], hiddenItems=[], rotation=0, spinning=false, soundOn=true, spinCount=0, volume=0.7, spinSpeed="normal", hideWinner=false, resultsHistory=[], idleTimer=null;
 
 function $(id){return document.getElementById(id)}
 function dishes(){
@@ -860,7 +897,7 @@ function tickSound(){
     if(!window._ac)window._ac=new (window.AudioContext||window.webkitAudioContext)();
     if(window._ac.state==="suspended")window._ac.resume();
     var o=window._ac.createOscillator(),g=window._ac.createGain();
-    o.frequency.value=880;g.gain.setValueAtTime(.06,window._ac.currentTime);g.gain.exponentialRampToValueAtTime(.001,window._ac.currentTime+.05);
+    o.frequency.value=880;g.gain.setValueAtTime(.06*volume,window._ac.currentTime);g.gain.exponentialRampToValueAtTime(.001,window._ac.currentTime+.05);
     o.connect(g);g.connect(window._ac.destination);o.start();o.stop(window._ac.currentTime+.06);
   }catch(e){}
 }
@@ -908,23 +945,31 @@ function showResult(d){
   $("modalCloseBtn").addEventListener("click", closeResultModal);
   openResultModal();
   confetti();
+  resultsHistory.push({name:d.name,when:new Date().toLocaleTimeString([],{hour:"2-digit",minute:"2-digit"})});
+  renderResults();
 }
 function spin(){
   if(spinning||!wheelItems.length)return;
   spinning=true;$("spinBtn").disabled=true;
+  stopIdle();
+  spinCount++; $("spinCountLabel").textContent="Spins: "+spinCount;
   var n=wheelItems.length, seg=360/n;
   var winIdx=Math.floor(Math.random()*n);
   var centre=winIdx*seg+seg/2;
   var targetMod=(360-(centre%360))%360;
   var currentMod=((rotation%360)+360)%360;
   var delta=((targetMod-currentMod)+360)%360;
-  rotation+=360*6+delta;
-  var wheel=$("wheel"); wheel.style.transform="rotate("+rotation+"deg)";
-  var ticks=0; var iv=setInterval(function(){ticks++; if(ticks%3===0)tickSound(); if(ticks>40)clearInterval(iv)},110);
+  var speedCfg={slow:{turns:8,ms:7000},normal:{turns:6,ms:5300},fast:{turns:4,ms:3500}}[spinSpeed]||{turns:6,ms:5300};
+  rotation+=360*speedCfg.turns+delta;
+  var wheel=$("wheel"); wheel.style.transition=""; wheel.style.transform="rotate("+rotation+"deg)";
+  var ticks=0; var iv=setInterval(function(){ticks++; if(ticks%3===0)tickSound(); if(ticks*110>=speedCfg.ms)clearInterval(iv)},110);
   setTimeout(function(){
     clearInterval(iv); spinning=false;$("spinBtn").disabled=false;
-    showResult(wheelItems[winIdx]);
-  },5300);
+    var winner=wheelItems[winIdx];
+    showResult(winner);
+    if(hideWinner){var hi=wheelItems.indexOf(winner);if(hi>-1){hiddenItems.push(winner);wheelItems.splice(hi,1);drawWheel(wheelItems);renderInputs();updateCount();}}
+    startIdle();
+  },speedCfg.ms);
 }
 $("spinBtn").addEventListener("click",spin);
 // the white circle in the middle of the wheel spins it too
@@ -944,6 +989,49 @@ $("shareBtn").addEventListener("click",function(){
   if(navigator.clipboard)navigator.clipboard.writeText(txt);
   var b=this; b.textContent="✓ Link Copied"; setTimeout(function(){b.textContent="↗ Share"},2000);
 });
+
+// Picker Wheel style options: volume, speed, spin count, hide-winner, fullscreen, shuffle/sort/remove-all, results history, idle rotation
+function renderResults(){
+  var card=$("resultsCard"), list=$("resultsList");
+  card.hidden=!resultsHistory.length;
+  list.innerHTML="";
+  resultsHistory.forEach(function(r){
+    var li=document.createElement("li");
+    var nm=document.createElement("span"); nm.textContent=r.name;
+    var wn=document.createElement("span"); wn.className="when"; wn.textContent=r.when;
+    li.appendChild(nm); li.appendChild(wn); list.appendChild(li);
+  });
+}
+$("clearResultsBtn").addEventListener("click",function(){resultsHistory=[];renderResults();});
+$("volumeRange").addEventListener("input",function(){volume=this.value/100;});
+$("speedSelect").addEventListener("change",function(){spinSpeed=this.value;});
+$("hideWinnerChk").addEventListener("change",function(){hideWinner=this.checked;});
+$("fullscreenBtn").addEventListener("click",function(){
+  var w=$("wheelWrap");
+  if(document.fullscreenElement){document.exitFullscreen();}
+  else if(w.requestFullscreen){w.requestFullscreen();}
+});
+document.addEventListener("fullscreenchange",function(){
+  $("fullscreenBtn").textContent=document.fullscreenElement?"Exit Fullscreen":"Fullscreen";
+});
+$("shuffleInputsBtn").addEventListener("click",function(){if(spinning)return;wheelItems=shuffle(wheelItems.slice());drawWheel(wheelItems);renderInputs();});
+$("sortAZBtn").addEventListener("click",function(){if(spinning)return;wheelItems.sort(function(a,b){return a.name.localeCompare(b.name)});drawWheel(wheelItems);renderInputs();});
+$("removeAllBtn").addEventListener("click",function(){
+  if(spinning)return;
+  if(!wheelItems.length&&!hiddenItems.length)return;
+  if(!confirm("Remove all dishes from the wheel?"))return;
+  wheelItems=[];hiddenItems=[];drawWheel(wheelItems);renderInputs();updateCount();
+});
+function startIdle(){
+  if(window.matchMedia("(prefers-reduced-motion: reduce)").matches)return;
+  stopIdle();
+  idleTimer=setInterval(function(){
+    if(spinning)return;
+    rotation+=0.25;
+    var w=$("wheel"); w.style.transition="transform .25s linear"; w.style.transform="rotate("+rotation+"deg)";
+  },250);
+}
+function stopIdle(){ if(idleTimer){clearInterval(idleTimer);idleTimer=null;} }
 
 // Filters
 document.querySelectorAll(".chips").forEach(function(group){
@@ -1069,6 +1157,7 @@ wireScrollRow("filtersBar", "filtersPrev", "filtersNext");
 
 buildWheel();
 renderGrid("");
+startIdle();
 
 /* ---------- 4-step meal wizard (below the wheel) ---------- */
 var wizDishes=RAW.map(function(r){return{name:r[0],meal:r[1],veg:r[2]===1,time:r[3],budget:r[4],cuisine:r[5],ing:r[6]}});
