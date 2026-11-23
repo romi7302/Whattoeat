@@ -4,8 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>What to Eat Wheel — Spin &amp; Decide What to Eat Today</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700;800&display=swap" rel="stylesheet">
 <meta name="description" content="Can't decide what to eat? Spin the free What to Eat Wheel — 100 dishes including American classics like BBQ ribs, Philly cheesesteak and meatloaf. Filter by breakfast, lunch or dinner, veg or non-veg, time and budget, and get a dish with its ingredients instantly.">
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍽️</text></svg>">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='42' fill='%232B580C'/><circle cx='50' cy='50' r='26' fill='none' stroke='white' stroke-width='6'/><circle cx='50' cy='50' r='8' fill='%23F7B71D'/></svg>">
 <script type="application/ld+json">
 {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[
 {"@type":"Question","name":"What should I eat today?","acceptedAnswer":{"@type":"Answer","text":"Spin the wheel above. It picks randomly from 100 real dishes matched to your meal, diet, time and budget — so instead of a generic list, you get one decision you can act on right now, with ingredients included."}},
@@ -19,14 +22,14 @@
 /* Picker Wheel layout, American edition: white header, light-blue tool band, navy + cherry red, dark-navy footer */
 :root{
   --sage:#D8DED4; --sage2:#CBD3C6; --card:#FFFFFF; --card2:#F2F6FB;
-  --ink:#1B2A41; --muted:#5A6B84; --line:#D3DEEB; --line2:#B9CBE0;
+  --ink:#21261F; --muted:#5C665C; --line:#D3DEEB; --line2:#B9CBE0;
   --green:#24406B; --green-d:#16294A; --yellow:#F2C230; --yellow-d:#D9A90B;
-  --tomato:#D43D2A; --tomato-d:#B3271E; --leaf:#2E7D4F; --leaf-bg:#E3F2E7;
+  --tomato:#FF5A36; --tomato-d:#E84824; --leaf:#2E7D4F; --leaf-bg:#E3F2E7;
   --radius:12px; --shadow:0 6px 22px rgba(46,74,31,.10);
 }
 *{box-sizing:border-box}
 html{scroll-behavior:smooth}
-body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;background:#fff;color:var(--ink);line-height:1.6}
+body{margin:0;font-family:'Plus Jakarta Sans',system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;background:#FAF7F0;color:var(--ink);line-height:1.6}
 h1,h2,h3{line-height:1.2;margin:0;color:var(--ink)}
 a{color:var(--tomato-d)}
 button,input,summary{font:inherit}
@@ -35,7 +38,6 @@ button{cursor:pointer}
 .article-wrap{max-width:860px;margin:0 auto;padding:0 18px}
 /* Header — like Picker Wheel: brand left, small buttons right */
 .site-header{background:#fff;border-bottom:1px solid var(--line)}
-.flag-strip{height:5px;background:linear-gradient(90deg,#B22234 0 33.3%,#fff 33.3% 66.6%,#3C3B6E 66.6% 100%)}
 .header-inner{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 0;flex-wrap:wrap}
 .brand{text-decoration:none;color:var(--ink);display:flex;flex-direction:column;line-height:1.15}
 .brand strong{font-size:1.25rem;letter-spacing:-.01em}
@@ -101,7 +103,82 @@ button{cursor:pointer}
 .inputs-row .name{font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .inputs-row .meal{font-size:.78rem;font-weight:700;color:var(--muted)}
 .inputs-row.hidden-row{opacity:.45;background:#F4F7EE}
-.icon-btn{border:1px solid var(--line);background:#fff;border-radius:8px;width:32px;height:32px;font-size:1rem;line-height:1;padding:0}
+.icon-btn{border:1px solid var(--line);background:#fff;border-radius:8px;min-width:32px;height:32px;padding:0 8px;font-size:.78rem;font-weight:700;line-height:1}
+.icon-btn.remove-btn{font-size:1.3rem;min-width:36px;height:36px}
+.dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px;vertical-align:1px}
+.dot-veg{background:#2E7D4F}
+.dot-nonveg{background:#D43D2A}
+.brand-mark{width:22px;height:22px;vertical-align:-4px;margin-right:2px}
+/* ---------- 4-step meal wizard (below the wheel) ---------- */
+.wizard{background:#fff;border:1px solid var(--line);border-radius:26px;box-shadow:var(--shadow);padding:30px 30px 26px;margin-bottom:34px;overflow:hidden}
+.progress-top{display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin-bottom:10px}
+.progress-step-label{font-weight:800;font-size:.86rem;letter-spacing:.08em;text-transform:uppercase;color:#2B580C}
+.progress-step-label b{color:var(--tomato-d)}
+.progress-count{font-size:.86rem;color:var(--muted);font-weight:600}
+.progress-track{height:8px;background:#F0EEE8;border-radius:999px;overflow:hidden;margin-bottom:8px}
+.progress-fill{height:100%;width:25%;background:linear-gradient(90deg,#2B580C,var(--tomato));border-radius:999px;transition:width .45s cubic-bezier(.22,.8,.3,1)}
+.progress-crumbs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:26px}
+.crumb{font-size:.8rem;font-weight:700;color:var(--muted);padding:5px 11px;border-radius:999px;background:#F6F4EF;border:1px solid var(--line)}
+.crumb.done{color:var(--ink);background:var(--leaf-bg);border-color:#CFE0D6}
+.crumb.now{color:#fff;background:#2B580C;border-color:#2B580C}
+.step{display:none}
+.step.active{display:block;animation:stepIn .38s cubic-bezier(.22,.8,.3,1)}
+@keyframes stepIn{from{opacity:0;transform:translateX(18px)}to{opacity:1;transform:none}}
+.step.back-in.active{animation:stepBack .38s cubic-bezier(.22,.8,.3,1)}
+@keyframes stepBack{from{opacity:0;transform:translateX(-18px)}to{opacity:1;transform:none}}
+.step-eyebrow{font-size:.78rem;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:var(--tomato-d);margin-bottom:8px}
+.step h2{font-size:clamp(1.75rem,4vw,2.3rem);font-weight:600;margin-bottom:8px}
+.step h2 em{font-style:italic;color:var(--tomato)}
+.step-sub{color:var(--muted);margin:0 0 22px;font-size:.99rem;max-width:54ch}
+.options{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.option{display:flex;gap:14px;align-items:flex-start;text-align:left;background:#fff;border:1.5px solid var(--line);border-radius:var(--radius);padding:18px;color:var(--ink);transition:transform .15s,box-shadow .15s,border-color .15s,background .15s;width:100%;cursor:pointer;font-family:inherit}
+.option:hover{transform:translateY(-3px);box-shadow:var(--shadow);border-color:var(--line2)}
+.option:active{transform:translateY(-1px)}
+.option.selected{border-color:var(--tomato);background:#FFF1EC;box-shadow:0 0 0 1px var(--tomato)}
+.option .opt-icon{width:48px;height:48px;border-radius:14px;background:var(--leaf-bg);display:grid;place-items:center;flex:none}
+.option .opt-icon svg{width:24px;height:24px;stroke:#2B580C}
+.option.selected .opt-icon{background:#fff}
+.option strong{display:block;font-size:1.06rem;font-weight:800;color:var(--ink);line-height:1.25;margin-bottom:3px}
+.option small{display:block;color:var(--muted);font-size:.88rem;line-height:1.45;font-weight:500}
+.option .opt-price{display:inline-block;margin-top:8px;font-size:.8rem;font-weight:800;color:var(--tomato-d);background:#fff;border:1px solid var(--line);padding:3px 9px;border-radius:999px}
+.option.selected .opt-price{border-color:#FFC9B8}
+.options.budget{grid-template-columns:1fr}
+.options.budget .option{align-items:center}
+.options.budget .opt-icon{border-radius:50%;font-weight:800;color:#2B580C;font-size:1.05rem}
+.options.budget .opt-body{flex:1}
+.step-foot{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:24px;padding-top:18px;border-top:1px solid var(--line)}
+.back-btn{display:inline-flex;align-items:center;gap:7px;background:none;border:1px solid transparent;color:var(--muted);font-weight:700;font-size:.94rem;padding:10px 12px;border-radius:10px;min-height:44px;cursor:pointer;font-family:inherit}
+.back-btn:hover{color:var(--ink);background:#F6F4EF}
+.foot-hint{font-size:.85rem;color:var(--muted);font-weight:500}
+.loading{display:none;text-align:center;padding:52px 10px 58px}
+.loading.show{display:block;animation:stepIn .3s ease}
+.spinner{width:52px;height:52px;margin:0 auto 18px;border-radius:50%;border:4px solid var(--leaf-bg);border-top-color:var(--tomato);animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading p{font-family:'Plus Jakarta Sans',sans-serif;font-size:1.3rem;font-weight:800;color:var(--ink);margin:0 0 6px}
+.loading span{color:var(--muted);font-size:.92rem}
+.dots i{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--tomato);margin:14px 3px 0;animation:pulse 1s infinite}
+.dots i:nth-child(2){animation-delay:.15s}.dots i:nth-child(3){animation-delay:.3s}
+@keyframes pulse{0%,100%{transform:translateY(0);opacity:.4}50%{transform:translateY(-6px);opacity:1}}
+.result-head{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+.result-badge{display:inline-flex;align-items:center;gap:7px;background:#2B580C;color:#fff;font-size:.8rem;font-weight:800;letter-spacing:.07em;text-transform:uppercase;padding:7px 13px;border-radius:999px}
+.result-badge::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--tomato)}
+.result-for{font-size:.9rem;color:var(--muted);font-weight:600}
+.step .result-dish{font-size:clamp(2rem,5vw,2.9rem);font-weight:600;margin-bottom:10px}
+.result-desc{color:var(--ink);font-size:1.04rem;margin:0 0 18px;max-width:58ch}
+.meta-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:18px}
+.meta{background:#FAF8F3;border:1px solid var(--line);border-radius:16px;padding:14px 16px}
+.meta span{display:block;font-size:.74rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:4px}
+.meta strong{font-size:1.12rem;color:var(--ink);font-weight:800}
+.why{background:var(--leaf-bg);border:1px solid #CFE0D6;border-radius:16px;padding:16px 18px;margin-bottom:22px}
+.why h3{font-size:1rem;font-weight:800;letter-spacing:.02em;margin-bottom:5px;display:flex;align-items:center;gap:8px}
+.why h3 svg{width:18px;height:18px;stroke:#2B580C;flex:none}
+.why p{margin:0;color:#3D4F47;font-size:.95rem}
+.result-actions{display:flex;gap:12px;flex-wrap:wrap}
+.btn-primary{background:var(--tomato);color:#fff;box-shadow:0 8px 20px rgba(255,90,54,.28)}
+.btn-primary:hover{background:var(--tomato-d)}
+.pool-note{margin-top:16px;font-size:.86rem;color:var(--muted)}
+.pool-note b{color:var(--ink)}
+
 .icon-btn:hover{border-color:var(--green);color:var(--green-d)}
 .inputs-add{display:flex;gap:8px;padding:12px 14px;border-top:1px solid var(--line)}
 .inputs-add input{flex:1;min-width:0;border:1.5px solid var(--line2);border-radius:10px;padding:11px 12px;font-size:.95rem}
@@ -186,6 +263,9 @@ footer p{margin:0 0 10px;font-size:.92rem}
 }
 @media(max-width:560px){
   .meal-cards,.dish-grid{grid-template-columns:1fr}
+  .wizard{padding:22px 18px 20px}
+  .options{grid-template-columns:1fr}
+  .meta-grid{grid-template-columns:1fr}
   .inputs-table-head,.inputs-row{grid-template-columns:16px minmax(0,1fr) 56px 36px 36px}
 }
 @media(prefers-reduced-motion:reduce){#wheel{transition:none}html{scroll-behavior:auto}}
@@ -201,29 +281,28 @@ footer p{margin:0 0 10px;font-size:.92rem}
 <body>
 <header class="site-header">
   <div class="wrap header-inner">
-    <a class="brand" href="index.html"><strong>🍽️ What to Eat Wheel</strong><span>Help you decide what to eat today · Made for the USA 🇺🇸</span></a>
+    <a class="brand" href="index.html"><strong><svg class="brand-mark" viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="42" fill="#2B580C"/><circle cx="50" cy="50" r="26" fill="none" stroke="#fff" stroke-width="6"/><circle cx="50" cy="50" r="8" fill="#F7B71D"/></svg> What to Eat Wheel</strong><span>Help you decide what to eat today · Made for the USA </span></a>
     <nav class="header-actions" aria-label="Tool actions">
       <button class="hbtn primary" id="topNewBtn" type="button">↻ New Wheel</button>
       <button class="hbtn" id="shareBtn" type="button">↗ Share</button>
-      <button class="hbtn" id="soundBtn" type="button">🔊 Sound On</button>
+      <button class="hbtn" id="soundBtn" type="button">Sound On</button>
       <a class="hbtn" href="#popular-tools">Tools</a>
     </nav>
   </div>
 </header>
-<div class="flag-strip" aria-hidden="true"></div>
 
 <section class="tool-band" id="tool">
   <div class="wrap">
     <div class="scroll-row">
       <button class="scroll-arrow" id="presetsPrev" type="button" aria-label="Scroll presets left">‹</button>
       <div class="presets" id="presets">
-      <button class="preset active" type="button" data-preset="any">✨ Surprise Me</button>
-      <button class="preset" type="button" data-preset="dinner">🌙 Dinner Dilemma</button>
-      <button class="preset" type="button" data-preset="breakfast15">⏱️ Breakfast in 15 Min</button>
-      <button class="preset" type="button" data-preset="healthy">🥗 Healthy Lunch</button>
-      <button class="preset" type="button" data-preset="american">🇺🇸 American Classics</button>
-      <button class="preset" type="button" data-preset="fastfood">🍔 Fast-Food Night</button>
-      <button class="preset" type="button" data-preset="budget">💸 Budget Bites</button>
+      <button class="preset active" type="button" data-preset="any">Surprise Me</button>
+      <button class="preset" type="button" data-preset="dinner">Dinner Dilemma</button>
+      <button class="preset" type="button" data-preset="breakfast15">Breakfast in 15 Min</button>
+      <button class="preset" type="button" data-preset="healthy">Healthy Lunch</button>
+      <button class="preset" type="button" data-preset="american"> American Classics</button>
+      <button class="preset" type="button" data-preset="fastfood">Fast-Food Night</button>
+      <button class="preset" type="button" data-preset="budget">Budget Bites</button>
       </div>
       <button class="scroll-arrow" id="presetsNext" type="button" aria-label="Scroll presets right">›</button>
     </div>
@@ -235,7 +314,7 @@ footer p{margin:0 0 10px;font-size:.92rem}
         <button class="chip active" type="button" data-val="any">Any</button><button class="chip" type="button" data-val="Breakfast">Breakfast</button><button class="chip" type="button" data-val="Lunch">Lunch</button><button class="chip" type="button" data-val="Dinner">Dinner</button><button class="chip" type="button" data-val="Snack">Snack</button>
       </div></div>
       <div class="filter-group"><label>Veg / Non-Veg</label><div class="chips" data-filter="diet">
-        <button class="chip active" type="button" data-val="any">Any</button><button class="chip" type="button" data-val="veg">🟢 Veg</button><button class="chip" type="button" data-val="nonveg">🔴 Non-Veg</button>
+        <button class="chip active" type="button" data-val="any">Any</button><button class="chip" type="button" data-val="veg"><span class="dot dot-veg"></span>Veg</button><button class="chip" type="button" data-val="nonveg"><span class="dot dot-nonveg"></span>Non-Veg</button>
       </div></div>
       <div class="filter-group"><label>Time</label><div class="chips" data-filter="time">
         <button class="chip active" type="button" data-val="any">Any time</button><button class="chip" type="button" data-val="15">≤ 15 min</button><button class="chip" type="button" data-val="30">≤ 30 min</button><button class="chip" type="button" data-val="31">30+ min</button>
@@ -254,8 +333,8 @@ footer p{margin:0 0 10px;font-size:.92rem}
           <div class="wheel-center" id="wheelCenter" role="button" tabindex="0" aria-label="Spin the wheel"><span class="hub-text" id="centerLabel">SPIN</span></div>
         </div>
         <div class="spin-row">
-          <button class="btn btn-spin" id="spinBtn" type="button">🎡 SPIN THE WHEEL</button>
-          <button class="btn btn-ghost" id="shuffleBtn" type="button">🔀 New 10 Options</button>
+          <button class="btn btn-spin" id="spinBtn" type="button">SPIN THE WHEEL</button>
+          <button class="btn btn-ghost" id="shuffleBtn" type="button">New 10 Options</button>
         </div>
         <p class="count-line" id="countLine"></p>
       </div>
@@ -263,7 +342,7 @@ footer p{margin:0 0 10px;font-size:.92rem}
       <div class="side-col">
         <div class="inputs-card">
           <div class="inputs-head">
-            <span class="title">📋 INPUTS</span><span class="count" id="inputsCount"></span>
+            <span class="title">INPUTS</span><span class="count" id="inputsCount"></span>
             <span class="inputs-tabs">
               <button class="tab active" id="mainModeTab" type="button">Main Mode</button>
               <button class="tab" id="textModeTab" type="button">Text Mode</button>
@@ -287,11 +366,144 @@ footer p{margin:0 0 10px;font-size:.92rem}
         </div>
 
         <div class="result" id="resultBox">
-          <div class="kicker">🎉 The wheel has decided</div>
+          <div class="kicker">The wheel has decided</div>
           <h3>What will it be?</h3>
           <p style="color:var(--muted);margin:0">Set your filters, spin the wheel, and your answer appears here — with the ingredients you need to make it.</p>
         </div>
       </div>
+    </div>
+  </div>
+</section>
+
+<section class="wizard" id="wizard" aria-label="Meal decision wizard">
+  <div class="progress-top">
+    <span class="progress-step-label" id="progressLabel">Step <b>1</b> of 4</span>
+    <span class="progress-count" id="progressCount">Meal time</span>
+  </div>
+  <div class="progress-track" role="progressbar" aria-label="Wizard progress" aria-valuemin="1" aria-valuemax="4" aria-valuenow="1" id="progressBar">
+    <div class="progress-fill" id="progressFill"></div>
+  </div>
+  <div class="progress-crumbs" id="crumbs" aria-hidden="true">
+    <span class="crumb now" data-crumb="1">1 · Meal</span>
+    <span class="crumb" data-crumb="2">2 · Diet</span>
+    <span class="crumb" data-crumb="3">3 · Budget</span>
+    <span class="crumb" data-crumb="4">4 · Your dish</span>
+  </div>
+
+  <!-- STEP 1 -->
+  <div class="step active" id="step1">
+    <div class="step-eyebrow">Question 1 of 3</div>
+    <h2>What meal are you <em>planning?</em></h2>
+    <p class="step-sub">Pick the meal you're deciding on — we'll only suggest dishes that fit it.</p>
+    <div class="options" role="radiogroup" aria-label="Meal time">
+      <button type="button" class="option" role="radio" aria-checked="false" data-group="meal" data-val="Breakfast">
+        <span class="opt-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg></span>
+        <span><strong>Breakfast</strong><small>Start the day right — eggs, oats, toast &amp; more</small></span>
+      </button>
+      <button type="button" class="option" role="radio" aria-checked="false" data-group="meal" data-val="Lunch">
+        <span class="opt-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11h18"/><path d="M5 11a7 7 0 0 1 14 0"/><path d="M2 19h20"/></svg></span>
+        <span><strong>Lunch</strong><small>Midday favourites — bowls, burgers, wraps &amp; salads</small></span>
+      </button>
+      <button type="button" class="option" role="radio" aria-checked="false" data-group="meal" data-val="Dinner">
+        <span class="opt-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg></span>
+        <span><strong>Dinner</strong><small>The main event — comforting, filling, worth cooking</small></span>
+      </button>
+      <button type="button" class="option" role="radio" aria-checked="false" data-group="meal" data-val="Snack">
+        <span class="opt-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.1 8.3 22 9.3 17 14.1 18.2 21 12 17.8 5.8 21 7 14.1 2 9.3 8.9 8.3"/></svg></span>
+        <span><strong>Snack</strong><small>Something small, quick and satisfying, right now</small></span>
+      </button>
+    </div>
+    <div class="step-foot"><span class="foot-hint">Tap a card to continue — it moves on automatically.</span></div>
+  </div>
+
+  <!-- STEP 2 -->
+  <div class="step" id="step2">
+    <div class="step-eyebrow">Question 2 of 3</div>
+    <h2>What's your <em>dietary vibe?</em></h2>
+    <p class="step-sub">Only dishes that match this will ever be suggested to you.</p>
+    <div class="options" role="radiogroup" aria-label="Dietary preference">
+      <button type="button" class="option" role="radio" aria-checked="false" data-group="diet" data-val="veg">
+        <span class="opt-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 20A7 7 0 0 1 4 13c0-4 3-8 8-9 4-.8 8 1 8 1s-.5 5-2 8c-1.6 3.2-4 7-7 7z"/><path d="M12 22v-8"/></svg></span>
+        <span><strong>Veg — Vegetarian</strong><small>No meat or fish. Eggs, cheese &amp; dairy are in</small></span>
+      </button>
+      <button type="button" class="option" role="radio" aria-checked="false" data-group="diet" data-val="nonveg">
+        <span class="opt-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15.5 15.5a5 5 0 1 0-7-7 5 5 0 0 0 7 7z"/><path d="M8.5 8.5L3 3"/><path d="M3 7V3h4"/></svg></span>
+        <span><strong>Non-Veg — Meat &amp; Seafood</strong><small>Chicken, beef, fish, prawns &amp; all the classics</small></span>
+      </button>
+      <button type="button" class="option" role="radio" aria-checked="false" data-group="diet" data-val="any">
+        <span class="opt-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3.5 9h17M3.5 15h17M12 3a15 15 0 0 1 0 18 15 15 0 0 1 0-18z"/></svg></span>
+        <span><strong>Anything Goes</strong><small>No rules — surprise me with anything good</small></span>
+      </button>
+    </div>
+    <div class="step-foot">
+      <button type="button" class="back-btn" data-back="1">← Back</button>
+      <span class="foot-hint" id="hint2"></span>
+    </div>
+  </div>
+
+  <!-- STEP 3 -->
+  <div class="step" id="step3">
+    <div class="step-eyebrow">Question 3 of 3</div>
+    <h2>What's your <em>budget?</em></h2>
+    <p class="step-sub">Per person, for this one meal — cooking at home or ordering in.</p>
+    <div class="options budget" role="radiogroup" aria-label="Budget range">
+      <button type="button" class="option" role="radio" aria-checked="false" data-group="budget" data-val="1">
+        <span class="opt-icon" aria-hidden="true">$</span>
+        <span class="opt-body"><strong>Budget-Friendly</strong><small>Big flavour, small bill — everyday staples done well</small></span>
+        <span class="opt-price">Under $10</span>
+      </button>
+      <button type="button" class="option" role="radio" aria-checked="false" data-group="budget" data-val="2">
+        <span class="opt-icon" aria-hidden="true">$$</span>
+        <span class="opt-body"><strong>Mid-Range</strong><small>The sweet spot — café quality without splashing out</small></span>
+        <span class="opt-price">$10 – $25</span>
+      </button>
+      <button type="button" class="option" role="radio" aria-checked="false" data-group="budget" data-val="3">
+        <span class="opt-icon" aria-hidden="true">$$$</span>
+        <span class="opt-body"><strong>Treat Yourself</strong><small>Premium ingredients and restaurant-level plates</small></span>
+        <span class="opt-price">$25+</span>
+      </button>
+    </div>
+    <div class="step-foot">
+      <button type="button" class="back-btn" data-back="2">← Back</button>
+      <span class="foot-hint" id="hint3"></span>
+    </div>
+  </div>
+
+  <!-- LOADING -->
+  <div class="loading" id="loading" aria-live="polite">
+    <div class="spinner" aria-hidden="true"></div>
+    <p>Curating your perfect bite…</p>
+    <span>Matching your meal, diet and budget</span>
+    <div class="dots" aria-hidden="true"><i></i><i></i><i></i></div>
+  </div>
+
+  <!-- STEP 4 : RESULT -->
+  <div class="step" id="step4">
+    <div class="result-head">
+      <span class="result-badge">Your match</span>
+      <span class="result-for" id="resultFor"></span>
+    </div>
+    <div aria-live="polite" id="resultLive">
+      <h2 class="result-dish" id="dishName">—</h2>
+      <p class="result-desc" id="dishDesc"></p>
+      <div class="meta-grid">
+        <div class="meta"><span>Estimated cost</span><strong id="dishCost">—</strong></div>
+        <div class="meta"><span>Prep / order time</span><strong id="dishTime">—</strong></div>
+        <div class="meta"><span>Cuisine</span><strong id="dishCuisine">—</strong></div>
+      </div>
+      <div class="why">
+        <h3><svg viewBox="0 0 24 24" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Why this fits your choice</h3>
+        <p id="dishWhy"></p>
+      </div>
+    </div>
+    <div class="result-actions">
+      <button type="button" class="btn btn-primary" id="spinAgainBtn">↻ Spin Another Idea</button>
+      <button type="button" class="btn btn-ghost" id="startOverBtn">Start Over</button>
+    </div>
+    <p class="pool-note" id="poolNote"></p>
+    <div class="step-foot">
+      <button type="button" class="back-btn" data-back="3">← Back to budget</button>
+      <span class="foot-hint">Same answers, a fresh pick every spin.</span>
     </div>
   </div>
 </section>
@@ -367,10 +579,10 @@ footer p{margin:0 0 10px;font-size:.92rem}
     <h2>6. What to Eat for Breakfast, Lunch, Dinner &amp; Snacks</h2>
     <p>Not sure which meal you are even deciding? Start from the meal — each one loads the wheel with dishes for that time of day.</p>
     <div class="meal-cards">
-      <button class="meal-card" type="button" data-preset-link="breakfast15"><strong>🌅 Breakfast Wheel</strong><span>Quick breakfasts in 15 minutes or less.</span></button>
-      <button class="meal-card" type="button" data-preset-link="any"><strong>☀️ Lunch Wheel</strong><span>Midday meals, from Cobb salad to Philly cheesesteak.</span></button>
-      <button class="meal-card" type="button" data-preset-link="dinner"><strong>🌙 Dinner Wheel</strong><span>End the “what to eat for dinner?” debate.</span></button>
-      <button class="meal-card" type="button" data-preset-link="fastfood"><strong>🍿 Snack &amp; Fast-Food Wheel</strong><span>Burgers, fries, wings and nachos for snack time.</span></button>
+      <button class="meal-card" type="button" data-preset-link="breakfast15"><strong>Breakfast Wheel</strong><span>Quick breakfasts in 15 minutes or less.</span></button>
+      <button class="meal-card" type="button" data-preset-link="any"><strong>Lunch Wheel</strong><span>Midday meals, from Cobb salad to Philly cheesesteak.</span></button>
+      <button class="meal-card" type="button" data-preset-link="dinner"><strong>Dinner Wheel</strong><span>End the “what to eat for dinner?” debate.</span></button>
+      <button class="meal-card" type="button" data-preset-link="fastfood"><strong>Snack &amp; Fast-Food Wheel</strong><span>Burgers, fries, wings and nachos for snack time.</span></button>
     </div>
   </section>
 
@@ -388,7 +600,7 @@ footer p{margin:0 0 10px;font-size:.92rem}
   <div class="wrap">
     <div class="footer-grid">
       <div>
-        <h4>🍽️ What to Eat Wheel</h4>
+        <h4>What to Eat Wheel</h4>
         <p>Help you decide what to eat today. Free, no sign-up — spin, decide, eat.</p>
         <p>© 2026 What to Eat Wheel</p>
       </div>
@@ -593,14 +805,14 @@ function drawWheel(items){
     var a0=(i*seg-90)*Math.PI/180, a1=((i+1)*seg-90)*Math.PI/180;
     var x0=cx+r*Math.cos(a0),y0=cy+r*Math.sin(a0),x1=cx+r*Math.cos(a1),y1=cy+r*Math.sin(a1);
     html+='<path d="M'+cx+','+cy+' L'+x0.toFixed(1)+','+y0.toFixed(1)+' A'+r+','+r+' 0 0 1 '+x1.toFixed(1)+','+y1.toFixed(1)+' Z" fill="'+COLORS[i%COLORS.length]+'" stroke="#FFF8EE" stroke-width="3"/>';
-    var mid=(i*seg+seg/2-90), rad=mid*Math.PI/180, lx=cx+236*Math.cos(rad), ly=cy+236*Math.sin(rad);
-    // single-line radial label, like the live wheel: reads outward along the spoke
-    var fontSize = n<=3 ? 15 : n<=5 ? 13.5 : 12;
-    var labelFill=(i%4===0)?"#fff":"#202020";
-    var labelShadow=(i%4===0)?' style="text-shadow:0 1px 2px rgba(0,0,0,.3)"':"";
+    var mid=(i*seg+seg/2-90), rad=mid*Math.PI/180, lx=cx+220*Math.cos(rad), ly=cy+220*Math.sin(rad);
+    // Picker Wheel style: one line, reads rim -> inward; SAME size in every segment (long names shorten with …)
+    var fontSize = n<=3 ? 20 : n<=5 ? 19 : 18;
+    var maxChars = Math.floor(160/(0.6*fontSize))-1;
     var labelName=items[i].name;
-    if(labelName.length>15)labelName=labelName.slice(0,14)+"…";
-    var labelHtml = '<text x="'+lx.toFixed(1)+'" y="'+ly.toFixed(1)+'" transform="rotate('+mid+' '+lx.toFixed(1)+' '+ly.toFixed(1)+')" text-anchor="end" dominant-baseline="middle" font-size="'+fontSize+'" font-weight="800" fill="'+labelFill+'"'+labelShadow+'>'+labelName.replace(/&/g,"&amp;")+'</text>';
+    if(labelName.length>maxChars)labelName=labelName.slice(0,maxChars)+"…";
+    var labelFill=(i%4===0)?"#fff":"#202020";
+    var labelHtml = '<text x="'+lx.toFixed(1)+'" y="'+ly.toFixed(1)+'" transform="rotate('+(mid+180)+' '+lx.toFixed(1)+' '+ly.toFixed(1)+')" text-anchor="start" dominant-baseline="middle" font-size="'+fontSize+'" font-weight="800" fill="'+labelFill+'">'+labelName.replace(/&/g,"&amp;")+'</text>';
     html += labelHtml;
   }
   html+='<circle cx="260" cy="260" r="252" fill="none" stroke="#211812" stroke-opacity=".12" stroke-width="2"/>';
@@ -611,16 +823,16 @@ function renderInputs(){
   wheelItems.forEach(function(d,i){
     var li=document.createElement("li"); li.className="inputs-row";
     li.innerHTML='<span class="dot" style="background:'+COLORS[i%COLORS.length]+'"></span><span class="name" title="'+d.name.replace(/"/g,"")+'">'+d.name+'</span><span class="meal">'+d.meal+'</span>';
-    var hide=document.createElement("button"); hide.className="icon-btn"; hide.type="button"; hide.textContent="👁️"; hide.title="Hide from wheel"; hide.setAttribute("aria-label","Hide "+d.name);
+    var hide=document.createElement("button"); hide.className="icon-btn"; hide.type="button"; hide.textContent="Hide"; hide.title="Hide from wheel"; hide.setAttribute("aria-label","Hide "+d.name);
     hide.addEventListener("click",function(){hiddenItems.push(d);wheelItems.splice(i,1);drawWheel(wheelItems);renderInputs();updateCount()});
-    var del=document.createElement("button"); del.className="icon-btn"; del.type="button"; del.textContent="×"; del.title="Remove from this wheel"; del.setAttribute("aria-label","Remove "+d.name);
+    var del=document.createElement("button"); del.className="icon-btn remove-btn"; del.type="button"; del.textContent="×"; del.title="Remove from this wheel"; del.setAttribute("aria-label","Remove "+d.name);
     del.addEventListener("click",function(){wheelItems.splice(i,1);drawWheel(wheelItems);renderInputs();updateCount()});
     li.appendChild(hide); li.appendChild(del); list.appendChild(li);
   });
   hiddenItems.forEach(function(d){
     var li=document.createElement("li"); li.className="inputs-row hidden-row";
     li.innerHTML='<span class="dot" style="background:#B9C8AC"></span><span class="name">'+d.name+' (hidden)</span><span class="meal">'+d.meal+'</span>';
-    var show=document.createElement("button"); show.className="icon-btn"; show.type="button"; show.textContent="👁️‍🗨️"; show.title="Show on wheel"; show.setAttribute("aria-label","Show "+d.name);
+    var show=document.createElement("button"); show.className="icon-btn"; show.type="button"; show.textContent="Show"; show.title="Show on wheel"; show.setAttribute("aria-label","Show "+d.name);
     show.addEventListener("click",function(){hiddenItems.splice(hiddenItems.indexOf(d),1);wheelItems.push(d);drawWheel(wheelItems);renderInputs();updateCount()});
     var blank=document.createElement("span");
     li.appendChild(show); li.appendChild(blank); list.appendChild(li);
@@ -677,19 +889,19 @@ function closeResultModal(){
 }
 function showResult(d){
   var box=$("resultBox"); box.classList.add("filled");
-  var dietTag=d.veg===true?'<span class="tag veg">🟢 Veg</span>':(d.veg===false?'<span class="tag nonveg">🔴 Non-Veg</span>':'<span class="tag">⭐ Your Own</span>');
-  var meta=d.custom?'<span class="tag">Your added food</span>':'<span class="tag">⏱️ '+d.time+' min</span><span class="tag">'+"$".repeat(d.budget)+' budget</span><span class="tag">'+d.meal+'</span>';
-  var body='<div class="kicker">🎉 The wheel has decided</div><h3>'+d.name+'</h3>'
+  var dietTag=d.veg===true?'<span class="tag veg"><span class="dot dot-veg"></span>Veg</span>':(d.veg===false?'<span class="tag nonveg"><span class="dot dot-nonveg"></span>Non-Veg</span>':'<span class="tag">Your Own</span>');
+  var meta=d.custom?'<span class="tag">Your added food</span>':'<span class="tag">'+d.time+' min</span><span class="tag">'+"$".repeat(d.budget)+' budget</span><span class="tag">'+d.meal+'</span>';
+  var body='<div class="kicker">The wheel has decided</div><h3>'+d.name+'</h3>'
     +'<div class="tags">'+dietTag+'<span class="tag">'+d.cuisine+'</span>'+meta+'</div>'
-    +'<div class="ingredients"><h4>🧾 You need these ingredients:</h4><p>'+d.ing+'</p></div>';
+    +'<div class="ingredients"><h4>You need these ingredients:</h4><p>'+d.ing+'</p></div>';
   box.innerHTML = body
-    +'<div class="result-actions"><button class="btn btn-spin" onclick="spin()">🎡 Spin Again</button>'
-    +'<button class="btn btn-ghost" id="copyBtn">📋 Copy Result</button></div>';
+    +'<div class="result-actions"><button class="btn btn-spin" onclick="spin()">Spin Again</button>'
+    +'<button class="btn btn-ghost" id="copyBtn">Copy Result</button></div>';
   wireCopy($("copyBtn"), d);
   // same result in a popup
   $("modalBody").innerHTML = body
-    +'<div class="result-actions"><button class="btn btn-spin" id="spinAgainModal">🎡 Spin Again</button>'
-    +'<button class="btn btn-ghost" id="copyBtnModal">📋 Copy Result</button>'
+    +'<div class="result-actions"><button class="btn btn-spin" id="spinAgainModal">Spin Again</button>'
+    +'<button class="btn btn-ghost" id="copyBtnModal">Copy Result</button>'
     +'<button class="btn btn-ghost" id="modalCloseBtn">Close</button></div>';
   wireCopy($("copyBtnModal"), d);
   $("spinAgainModal").addEventListener("click", function(){ closeResultModal(); spin(); });
@@ -726,7 +938,7 @@ $("resultModal").addEventListener("click",function(e){ if(e.target===$("resultMo
 document.addEventListener("keydown",function(e){ if(e.key==="Escape") closeResultModal(); });
 $("shuffleBtn").addEventListener("click",function(){if(!spinning)buildWheel()});
 $("topNewBtn").addEventListener("click",function(){if(!spinning){buildWheel();document.getElementById("tool").scrollIntoView({behavior:"smooth"})}});
-$("soundBtn").addEventListener("click",function(){soundOn=!soundOn;this.textContent=soundOn?"🔊 Sound On":"🔇 Sound Off"});
+$("soundBtn").addEventListener("click",function(){soundOn=!soundOn;this.textContent=soundOn?"Sound On":"Sound Off"});
 $("shareBtn").addEventListener("click",function(){
   var txt="What to Eat Wheel — spin and decide what to eat today! "+location.href;
   if(navigator.clipboard)navigator.clipboard.writeText(txt);
@@ -826,7 +1038,7 @@ function renderGrid(q){
   var grid=$("dishGrid"); grid.innerHTML="";
   all.slice(0,200).forEach(function(r){
     var b=document.createElement("button");b.className="dish";
-    b.innerHTML="<strong>"+r[0]+"</strong><span>"+(r[2]===1?"🟢 Veg":"🔴 Non-Veg")+" · "+r[1]+" · "+r[3]+" min · "+r[5]+"</span>";
+    b.innerHTML="<strong>"+r[0]+"</strong><span>"+(r[2]===1?"<span class='dot dot-veg'></span>Veg":"<span class='dot dot-nonveg'></span>Non-Veg")+" · "+r[1]+" · "+r[3]+" min · "+r[5]+"</span>";
     b.addEventListener("click",function(){showResult({name:r[0],meal:r[1],veg:r[2]===1,time:r[3],budget:r[4],cuisine:r[5],ing:r[6],custom:false});window.scrollTo({top:$("tool").offsetTop-10,behavior:"smooth"})});
     grid.appendChild(b);
   });
@@ -857,6 +1069,138 @@ wireScrollRow("filtersBar", "filtersPrev", "filtersNext");
 
 buildWheel();
 renderGrid("");
+
+/* ---------- 4-step meal wizard (below the wheel) ---------- */
+var wizDishes=RAW.map(function(r){return{name:r[0],meal:r[1],veg:r[2]===1,time:r[3],budget:r[4],cuisine:r[5],ing:r[6]}});
+var wizAnswers={meal:null,diet:null,budget:null};
+var wizCurrentStep=1, wizLastDish=null, wizPool=[], wizPoolLevel=0;
+var WIZ_DIET_LABEL={veg:"Vegetarian",nonveg:"Non-Veg (Meat & Seafood)",any:"Anything Goes"};
+var WIZ_BUDGET_LABEL={1:"Budget-Friendly",2:"Mid-Range",3:"Treat Yourself"};
+var WIZ_BUDGET_RANGE={1:"Under $10",2:"$10 – $25",3:"$25+"};
+var WIZ_STEP_NAMES={1:"Meal time",2:"Dietary preference",3:"Budget",4:"Your dish"};
+function wizDietMatches(d,choice){
+  if(choice==="any")return true;
+  if(choice==="veg")return d.veg===true;
+  return d.veg===false;
+}
+function wizComputePool(){
+  var exact=wizDishes.filter(function(d){return d.meal===wizAnswers.meal&&d.budget===parseInt(wizAnswers.budget,10)&&wizDietMatches(d,wizAnswers.diet)});
+  if(exact.length)return{list:exact,level:0};
+  var relaxed=wizDishes.filter(function(d){return d.meal===wizAnswers.meal&&wizDietMatches(d,wizAnswers.diet)});
+  if(relaxed.length)return{list:relaxed,level:1};
+  var mealOnly=wizDishes.filter(function(d){return d.meal===wizAnswers.meal});
+  return{list:mealOnly,level:2};
+}
+function wizPickDish(){
+  if(!wizPool.length)return null;
+  var cands=wizPool;
+  if(wizPool.length>1&&wizLastDish)cands=wizPool.filter(function(d){return d.name!==wizLastDish.name});
+  return cands[Math.floor(Math.random()*cands.length)];
+}
+function wizWhyText(d){
+  var dietPart=wizAnswers.diet==="any"?"you said anything goes, and this is one of the best-loved picks in the set":wizAnswers.diet==="veg"?"it's fully vegetarian, just as you asked":"it brings the meat / seafood you asked for";
+  return "You picked "+wizAnswers.meal.toLowerCase()+", so this is a "+wizAnswers.meal.toLowerCase()+" dish — and "+dietPart+". It sits in your "+WIZ_BUDGET_LABEL[wizAnswers.budget]+" range ("+WIZ_BUDGET_RANGE[wizAnswers.budget]+"), and it's ready in about "+d.time+" minutes.";
+}
+function wizRenderResult(){
+  var d=wizPickDish();
+  if(!d)return;
+  wizLastDish=d;
+  $("dishName").textContent=d.name;
+  $("dishDesc").textContent="You need these ingredients: "+d.ing;
+  $("dishCost").textContent=WIZ_BUDGET_RANGE[wizAnswers.budget];
+  $("dishTime").textContent=d.time+" min";
+  $("dishCuisine").textContent=d.cuisine;
+  $("dishWhy").textContent=wizWhyText(d);
+  $("resultFor").textContent=wizAnswers.meal+" · "+WIZ_DIET_LABEL[wizAnswers.diet]+" · "+WIZ_BUDGET_LABEL[wizAnswers.budget]+" ("+WIZ_BUDGET_RANGE[wizAnswers.budget]+")";
+  var note;
+  if(wizPoolLevel===0)note="<b>"+wizPool.length+" dishes</b> match your exact answers — Spin Another Idea cycles through them without repeating the last one.";
+  else if(wizPoolLevel===1)note="No "+wizAnswers.meal.toLowerCase()+" dish sits exactly in your "+WIZ_BUDGET_LABEL[wizAnswers.budget]+" range, so this is the closest match — <b>"+wizPool.length+" "+wizAnswers.meal.toLowerCase()+" dishes</b> fit your meal and diet at any budget.";
+  else note="No "+wizAnswers.meal.toLowerCase()+" dish fits your diet and budget together, so this is the closest match — <b>"+wizPool.length+" "+wizAnswers.meal.toLowerCase()+" dishes</b> in the set.";
+  $("poolNote").innerHTML=note;
+}
+function wizGoToStep(n,backwards){
+  wizCurrentStep=n;
+  for(var i=1;i<=4;i++){
+    var el=$("step"+i);
+    el.classList.toggle("active",i===n);
+    el.classList.toggle("back-in",!!backwards&&i===n);
+  }
+  $("loading").classList.remove("show");
+  $("progressFill").style.width=(n*25)+"%";
+  $("progressBar").setAttribute("aria-valuenow",String(n));
+  if(n<4)$("progressLabel").innerHTML="Step <b>"+n+"</b> of 4";
+  else $("progressLabel").innerHTML="<b>Done</b> — here's your dish";
+  $("progressCount").textContent=WIZ_STEP_NAMES[n];
+  document.querySelectorAll("#wizard .crumb").forEach(function(c){
+    var cn=parseInt(c.getAttribute("data-crumb"),10);
+    c.classList.toggle("now",cn===n);
+    c.classList.toggle("done",cn<n);
+  });
+  var hints={2:wizAnswers.meal?"Meal: "+wizAnswers.meal:"",3:(wizAnswers.meal?wizAnswers.meal+" · ":"")+WIZ_DIET_LABEL[wizAnswers.diet||"any"]};
+  if($("hint2"))$("hint2").textContent=hints[2]||"";
+  if($("hint3"))$("hint3").textContent=hints[3]||"";
+  $("wizard").scrollIntoView({behavior:"smooth",block:"nearest"});
+}
+function wizShowLoadingThenResult(){
+  for(var i=1;i<=4;i++)$("step"+i).classList.remove("active");
+  document.querySelectorAll("#wizard .crumb").forEach(function(c){
+    var cn=parseInt(c.getAttribute("data-crumb"),10);
+    c.classList.toggle("now",cn===4);c.classList.toggle("done",cn<4);
+  });
+  $("progressFill").style.width="100%";
+  $("progressBar").setAttribute("aria-valuenow","4");
+  $("progressLabel").innerHTML="Step <b>4</b> of 4";
+  $("progressCount").textContent="Finding your dish…";
+  var res=wizComputePool();
+  wizPool=res.list;wizPoolLevel=res.level;
+  $("loading").classList.add("show");
+  setTimeout(function(){
+    $("loading").classList.remove("show");
+    wizRenderResult();
+    wizGoToStep(4,false);
+  },650);
+}
+document.querySelectorAll("#wizard .option").forEach(function(btn){
+  btn.addEventListener("click",function(){
+    var group=btn.getAttribute("data-group");
+    wizAnswers[group]=btn.getAttribute("data-val");
+    document.querySelectorAll('#wizard .option[data-group="'+group+'"]').forEach(function(b){
+      b.classList.toggle("selected",b===btn);
+      b.setAttribute("aria-checked",b===btn?"true":"false");
+    });
+    setTimeout(function(){
+      if(group==="meal")wizGoToStep(2,false);
+      else if(group==="diet")wizGoToStep(3,false);
+      else if(group==="budget")wizShowLoadingThenResult();
+    },190);
+  });
+});
+document.querySelectorAll("#wizard .options").forEach(function(groupEl){
+  groupEl.addEventListener("keydown",function(e){
+    if(e.key!=="ArrowDown"&&e.key!=="ArrowRight"&&e.key!=="ArrowUp"&&e.key!=="ArrowLeft")return;
+    var opts=Array.prototype.slice.call(groupEl.querySelectorAll(".option"));
+    var idx=opts.indexOf(document.activeElement);
+    if(idx===-1)return;
+    e.preventDefault();
+    var next=(e.key==="ArrowDown"||e.key==="ArrowRight")?(idx+1)%opts.length:(idx-1+opts.length)%opts.length;
+    opts[next].focus();
+  });
+});
+document.querySelectorAll("#wizard [data-back]").forEach(function(btn){
+  btn.addEventListener("click",function(){wizGoToStep(parseInt(btn.getAttribute("data-back"),10),true)});
+});
+$("spinAgainBtn").addEventListener("click",function(){
+  var live=$("resultLive");
+  live.style.opacity=".35";
+  setTimeout(function(){wizRenderResult();live.style.opacity="1"},220);
+});
+$("startOverBtn").addEventListener("click",function(){
+  wizAnswers={meal:null,diet:null,budget:null};
+  wizLastDish=null;wizPool=[];wizPoolLevel=0;
+  document.querySelectorAll("#wizard .option").forEach(function(b){b.classList.remove("selected");b.setAttribute("aria-checked","false")});
+  wizGoToStep(1,true);
+});
+
 </script>
 </body>
 </html>
