@@ -237,6 +237,8 @@ button{cursor:pointer}
 .ingredients h4{margin:0 0 6px;font-size:.92rem}
 .ingredients p{margin:0;color:var(--muted)}
 .result-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
+.dish-photo{display:block;width:100%;max-height:260px;object-fit:cover;border-radius:12px;margin:0 0 12px}
+#dishPhoto{margin:0 0 14px}
 .result-actions .btn{padding:10px 16px;font-size:.92rem}
 /* Result popup */
 .modal-overlay{position:fixed;inset:0;background:rgba(20,32,18,.55);display:flex;align-items:center;justify-content:center;z-index:100;padding:18px}
@@ -534,6 +536,7 @@ footer p{margin:0 0 10px;font-size:.92rem}
       <span class="result-for" id="resultFor"></span>
     </div>
     <div aria-live="polite" id="resultLive">
+      <img id="dishPhoto" class="dish-photo" alt="" hidden>
       <h2 class="result-dish" id="dishName">—</h2>
       <p class="result-desc" id="dishDesc"></p>
       <div class="meta-grid">
@@ -943,11 +946,115 @@ function closeResultModal(){
   var m=$("resultModal"); if(m) m.hidden=true;
   if(document.body) document.body.style.overflow="";
 }
+var DISH_PHOTOS={
+"Pancakes with Berries":"images/pancakes-with-berries.jpg",
+"Scrambled Eggs & Toast":"images/scrambled-eggs-and-toast.jpg",
+"Avocado Toast":"images/avocado-toast.jpg",
+"French Toast":"images/french-toast.jpg",
+"Oatmeal Bowl":"images/oatmeal-bowl.jpg",
+"Egg & Cheese Sandwich":"images/egg-and-cheese-sandwich.jpg",
+"Smoothie Bowl":"images/smoothie-bowl.jpg",
+"Shakshuka":"images/shakshuka.jpg",
+"Waffles":"images/waffles.jpg",
+"Breakfast Burrito":"images/breakfast-burrito.jpg",
+"Fruit & Yogurt Parfait":"images/fruit-and-yogurt-parfait.jpg",
+"Chicken Burger":"images/chicken-burger.jpg",
+"Veg Fried Rice":"images/veg-fried-rice.jpg",
+"Caesar Salad":"images/caesar-salad.jpg",
+"Club Sandwich":"images/club-sandwich.jpg",
+"Pasta Alfredo":"images/pasta-alfredo.jpg",
+"Falafel Wrap":"images/falafel-wrap.jpg",
+"Grilled Fish & Rice":"images/grilled-fish-and-rice.jpg",
+"Chicken Chow Mein":"images/chicken-chow-mein.jpg",
+"Quinoa Buddha Bowl":"images/quinoa-buddha-bowl.jpg",
+"Beef Burger":"images/beef-burger.jpg",
+"Tuna Salad Sandwich":"images/tuna-salad-sandwich.jpg",
+"Margherita Pizza":"images/margherita-pizza.jpg",
+"Pepperoni Pizza":"images/pepperoni-pizza.jpg",
+"Spaghetti Bolognese":"images/spaghetti-bolognese.jpg",
+"Veg Hakka Noodles":"images/veg-hakka-noodles.jpg",
+"Salmon & Veggies":"images/salmon-and-veggies.jpg",
+"Tacos al Pastor":"images/tacos-al-pastor.jpg",
+"Chicken Manchurian & Rice":"images/chicken-manchurian-and-rice.jpg",
+"Lasagna":"images/lasagna.jpg",
+"Chicken Fajitas":"images/chicken-fajitas.jpg",
+"Ramen Bowl":"images/ramen-bowl.jpg",
+"Mushroom Risotto":"images/mushroom-risotto.jpg",
+"Grilled Chicken Steak":"images/grilled-chicken-steak.jpg",
+"Veg Burrito Bowl":"images/veg-burrito-bowl.jpg",
+"Fish & Chips":"images/fish-and-chips.jpg",
+"Penne Arrabbiata":"images/penne-arrabbiata.jpg",
+"Sushi Platter":"images/sushi-platter.jpg",
+"Stuffed Bell Peppers":"images/stuffed-bell-peppers.jpg",
+"Chicken Wings":"images/chicken-wings.jpg",
+"French Fries":"images/french-fries.jpg",
+"Nachos & Cheese":"images/nachos-and-cheese.jpg",
+"Spring Rolls":"images/spring-rolls.jpg",
+"Chicken Nuggets":"images/chicken-nuggets.jpg",
+"Hummus & Pita":"images/hummus-and-pita.jpg",
+"Loaded Fries":"images/loaded-fries.jpg",
+"Cheese Omelette":"images/cheese-omelette.jpg",
+"Banana Pancakes":"images/banana-pancakes.jpg",
+"Muesli & Milk":"images/muesli-and-milk.jpg",
+"Spinach & Egg Muffins":"images/spinach-and-egg-muffins.jpg",
+"Peanut Butter Toast":"images/peanut-butter-toast.jpg",
+"Chicken Sandwich":"images/chicken-sandwich.jpg",
+"Egg Fried Rice":"images/egg-fried-rice.jpg",
+"Chicken Shawarma":"images/chicken-shawarma.jpg",
+"Fish Burger":"images/fish-burger.jpg",
+"Chicken Soup & Bread":"images/chicken-soup-and-bread.jpg",
+"Prawn Fried Rice":"images/prawn-fried-rice.jpg",
+"Cheese Pizza Slice":"images/cheese-pizza-slice.jpg",
+"Greek Salad":"images/greek-salad.jpg",
+"Tomato Soup & Grilled Cheese":"images/tomato-soup-and-grilled-cheese.jpg",
+"Mac & Cheese":"images/mac-and-cheese.jpg",
+"Chicken Alfredo Pasta":"images/chicken-alfredo-pasta.jpg",
+"Veg Stir-Fry & Noodles":"images/veg-stir-fry-and-noodles.jpg",
+"Baked Potato & Beans":"images/baked-potato-and-beans.jpg",
+"Chicken Roast Dinner":"images/chicken-roast-dinner.jpg",
+"Shrimp Pasta":"images/shrimp-pasta.jpg",
+"Quesadillas":"images/quesadillas.jpg",
+"Vegetable Soup":"images/vegetable-soup.jpg",
+"Lamb Chops & Mash":"images/lamb-chops-and-mash.jpg",
+"Garlic Bread":"images/garlic-bread.jpg",
+"Cheese Balls":"images/cheese-balls.jpg",
+"Roasted Chickpeas":"images/roasted-chickpeas.jpg",
+"Banana Bread Slice":"images/banana-bread-slice.jpg",
+"Popcorn Bowl":"images/popcorn-bowl.jpg",
+"Biscuits & Gravy":"images/biscuits-and-gravy.jpg",
+"Bagel & Cream Cheese":"images/bagel-and-cream-cheese.jpg",
+"Denver Omelette":"images/denver-omelette.jpg",
+"Sausage & Egg Muffin":"images/sausage-and-egg-muffin.jpg",
+"Breakfast Hash":"images/breakfast-hash.jpg",
+"Cornbread Muffins":"images/cornbread-muffins.jpg",
+"Philly Cheesesteak":"images/philly-cheesesteak.jpg",
+"BLT Sandwich":"images/blt-sandwich.jpg",
+"Reuben Sandwich":"images/reuben-sandwich.jpg",
+"Buffalo Chicken Wrap":"images/buffalo-chicken-wrap.jpg",
+"Cobb Salad":"images/cobb-salad.jpg",
+"New England Clam Chowder":"images/new-england-clam-chowder.jpg",
+"Lobster Roll":"images/lobster-roll.jpg",
+"BBQ Ribs & Coleslaw":"images/bbq-ribs-and-coleslaw.jpg",
+"Fried Chicken & Waffles":"images/fried-chicken-and-waffles.jpg",
+"Chicken Pot Pie":"images/chicken-pot-pie.jpg",
+"Meatloaf & Mashed Potatoes":"images/meatloaf-and-mashed-potatoes.jpg",
+"Shrimp & Grits":"images/shrimp-and-grits.jpg",
+"Jambalaya":"images/jambalaya.jpg",
+"New York-Style Pizza":"images/new-york-style-pizza.jpg",
+"Chili con Carne":"images/chili-con-carne.jpg",
+"Chicago Deep-Dish Pizza":"images/chicago-deep-dish-pizza.jpg",
+"Corn Dogs":"images/corn-dogs.jpg",
+"Onion Rings":"images/onion-rings.jpg",
+"Mozzarella Sticks":"images/mozzarella-sticks.jpg",
+"Potato Skins":"images/potato-skins.jpg"
+};
 function showResult(d){
   var box=$("resultBox"); box.classList.add("filled");
   var dietTag=d.veg===true?'<span class="tag veg"><span class="dot dot-veg"></span>Veg</span>':(d.veg===false?'<span class="tag nonveg"><span class="dot dot-nonveg"></span>Non-Veg</span>':'<span class="tag">Your Own</span>');
   var meta=d.custom?'<span class="tag">Your added food</span>':'<span class="tag">'+d.time+' min</span><span class="tag">'+"$".repeat(d.budget)+' budget</span><span class="tag">'+d.meal+'</span>';
-  var body='<div class="kicker">The wheel has decided</div><h3>'+d.name+'</h3>'
+  var photoSrc=d.custom?"images/placeholder.jpg":DISH_PHOTOS[d.name];
+  var photo=photoSrc?'<img class="dish-photo" src="'+photoSrc+'" alt="Photo of '+d.name+'" loading="lazy">':'';
+  var body='<div class="kicker">The wheel has decided</div>'+photo+'<h3>'+d.name+'</h3>'
     +'<div class="tags">'+dietTag+'<span class="tag">'+d.cuisine+'</span>'+meta+'</div>'
     +'<div class="ingredients"><h4>You need these ingredients:</h4><p>'+d.ing+'</p></div>';
   box.innerHTML = body
@@ -1230,6 +1337,7 @@ function wizRenderResult(){
   if(!d)return;
   wizLastDish=d;
   $("dishName").textContent=d.name;
+  var wp=$("dishPhoto"); var wsrc=d.custom?"images/placeholder.jpg":DISH_PHOTOS[d.name]; if(wsrc){wp.src=wsrc;wp.alt="Photo of "+d.name;wp.hidden=false;}else{wp.hidden=true;wp.removeAttribute("src");}
   $("dishDesc").textContent="You need these ingredients: "+d.ing;
   $("dishCost").textContent=WIZ_BUDGET_RANGE[wizAnswers.budget];
   $("dishTime").textContent=d.time+" min";
