@@ -904,15 +904,21 @@ function buildWheelFrom(items,countText){
   if(countText)$("countLine").textContent=countText;
   else $("countLine").textContent=wheelItems.length+" dishes on the wheel";
 }
+// Real sounds (Freesound, CC0 1.0 Public Domain — free for any use, no attribution
+// required; see sounds/README): a short woody tick for the spin and a win jingle
+// jingle for the result. The tick still fires once per
+// segment the pointer passes (trackTicks), so it naturally slows as the wheel slows
+// and stops when the wheel stops; the win jingle plays only after the wheel has
+// fully stopped (see spin()).
+var spinAudio=new Audio("sounds/spin.mp3"); spinAudio.preload="auto";
+var winAudio=new Audio("sounds/win.mp3"); winAudio.preload="auto";
 function tickSound(){
   if(!soundOn)return;
-  try{
-    if(!window._ac)window._ac=new (window.AudioContext||window.webkitAudioContext)();
-    if(window._ac.state==="suspended")window._ac.resume();
-    var o=window._ac.createOscillator(),g=window._ac.createGain();
-    o.frequency.value=880;g.gain.setValueAtTime(.06*volume,window._ac.currentTime);g.gain.exponentialRampToValueAtTime(.001,window._ac.currentTime+.05);
-    o.connect(g);g.connect(window._ac.destination);o.start();o.stop(window._ac.currentTime+.06);
-  }catch(e){}
+  try{ spinAudio.volume=volume; spinAudio.currentTime=0; var p=spinAudio.play(); if(p&&p.catch)p.catch(function(){}); }catch(e){}
+}
+function winSound(){
+  if(!soundOn)return;
+  try{ winAudio.volume=volume; winAudio.currentTime=0; var p=winAudio.play(); if(p&&p.catch)p.catch(function(){}); }catch(e){}
 }
 function confetti(){
   if(window.matchMedia("(prefers-reduced-motion: reduce)").matches)return;
@@ -974,12 +980,28 @@ function spin(){
   var delta=((targetMod-currentMod)+360)%360;
   var speedCfg={slow:{turns:8,ms:7000},normal:{turns:6,ms:5300},fast:{turns:4,ms:3500}}[spinSpeed]||{turns:6,ms:5300};
   rotation+=360*speedCfg.turns+delta;
-  var wheel=$("wheel"); wheel.style.transition=""; wheel.style.transform="rotate("+rotation+"deg)";
-  var ticks=0; var iv=setInterval(function(){ticks++; if(ticks%3===0)tickSound(); if(ticks*110>=speedCfg.ms)clearInterval(iv)},110);
+  var wheel=$("wheel"); wheel.style.transition="transform "+(speedCfg.ms/1000)+"s cubic-bezier(.12,.8,.08,1)"; wheel.style.transform="rotate("+rotation+"deg)";
+  // tick once per segment the pointer passes, tracked from the wheel's REAL angle:
+  // fast while the wheel is fast, slowing as it slows, silent once it stops
+  var prevAngle=currentMod, accDeg=0;
+  function trackTicks(){
+    if(!spinning)return;
+    var ang=currentMod, m=window.getComputedStyle(wheel).transform;
+    if(m && m!=="none"){
+      var p=m.slice(7,-1).split(",");
+      ang=(Math.atan2(parseFloat(p[1]),parseFloat(p[0]))*180/Math.PI+360)%360;
+    }
+    var dd=ang-prevAngle; if(dd>180)dd-=360; if(dd<-180)dd+=360;
+    prevAngle=ang; accDeg+=dd;
+    if(accDeg>=seg){ tickSound(); accDeg=accDeg%seg; }
+    requestAnimationFrame(trackTicks);
+  }
+  requestAnimationFrame(trackTicks);
   setTimeout(function(){
-    clearInterval(iv); spinning=false;$("spinBtn").disabled=false;
+    spinning=false;$("spinBtn").disabled=false;
     var winner=wheelItems[winIdx];
     showResult(winner);
+    winSound();
     if(hideWinner){var hi=wheelItems.indexOf(winner);if(hi>-1){hiddenItems.push(winner);wheelItems.splice(hi,1);drawWheel(wheelItems);renderInputs();updateCount();}}
     startIdle();
   },speedCfg.ms);
