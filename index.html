@@ -24,12 +24,13 @@
 {"@type":"Question","name":"What should I eat today?","acceptedAnswer":{"@type":"Answer","text":"Spin the wheel above. It picks randomly from 100 real dishes matched to your meal, diet, time and budget — so instead of a generic list, you get one decision you can act on right now, with ingredients included."}},
 {"@type":"Question","name":"What to eat for dinner when I can't decide?","acceptedAnswer":{"@type":"Answer","text":"Tap the Dinner Dilemma preset and spin. It filters the wheel to dinner dishes only. Still stuck after one spin? Spin again — or cook whatever the second spin says."}},
 {"@type":"Question","name":"Is there a veg-only option?","acceptedAnswer":{"@type":"Answer","text":"Yes. Set the Veg / Non-Veg filter to Veg and every dish on the wheel is vegetarian. There is also an American Classics preset with comfort-food favorites like meatloaf, mac & cheese and BBQ ribs."}},
-{"@type":"Question","name":"Can I add my own foods to the wheel?","acceptedAnswer":{"@type":"Answer","text":"Yes — use Add your own foods in the Inputs panel. Your items join the spin instantly for this session. Family favorites and fridge-leftover ideas work best."}},
-{"@type":"Question","name":"Is the What to Eat Wheel free?","acceptedAnswer":{"@type":"Answer","text":"Completely free, no sign-up, no download. It runs entirely in your browser as a single lightweight page."}}
+{"@type":"Question","name":"Can I add my own foods to the wheel?","acceptedAnswer":{"@type":"Answer","text":"Yes — use Add your own foods in the Inputs panel. Your items join the spin instantly for this session. Family favorites and fridge-leftover ideas work best. You can also suggest a dish for the wheel."}},
+{"@type":"Question","name":"Is the What to Eat Wheel free?","acceptedAnswer":{"@type":"Answer","text":"Completely free, no sign-up, no download. It runs entirely in your browser as a single lightweight page."}},
+{"@type":"Question","name":"What should I cook tonight?","acceptedAnswer":{"@type":"Answer","text":"Tap the Dinner Dilemma preset and spin — the wheel gives you one dinner idea with its ingredients, so you know exactly what to cook tonight. One spin, one decision, no more 'I don't know'."}}
 ]}
 </script>
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"WebApplication","name":"What to Eat Wheel","url":"https://whattoeat-kohl.vercel.app/","applicationCategory":"LifestyleApplication","operatingSystem":"Any","isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"description":"Free wheel spinner that picks what to eat from 100 dishes for breakfast, lunch, dinner and snacks, filtered by diet, time and budget."}
+{"@context":"https://schema.org","@type":"WebApplication","name":"What to Eat Wheel","url":"https://whattoeat-kohl.vercel.app/","applicationCategory":"LifestyleApplication","operatingSystem":"Any","isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"description":"Free wheel spinner that picks what to eat from 100 dishes for breakfast, lunch, dinner and snacks, filtered by diet, time and budget.","dateModified":"2026-11-25","author":{"@type":"Organization","name":"What to Eat Wheel","url":"https://whattoeat-kohl.vercel.app/"}}
 </script>
 <style>
 /* Picker Wheel layout, American edition: white header, light-blue tool band, navy + cherry red, dark-navy footer */
@@ -630,7 +631,7 @@ footer p{margin:0 0 10px;font-size:.92rem}
 
   <section id="meals">
     <h2>6. What to Eat for Breakfast, Lunch, Dinner &amp; Snacks</h2>
-    <p>Not sure which meal you are even deciding? Start from the meal — each one loads the wheel with dishes for that time of day.</p>
+    <p>Not sure which meal you are even deciding? Start from the meal — each one loads the wheel with dishes for that time of day. Looking for breakfast ideas, lunch ideas or dinner ideas? Pick a meal below and spin for instant meal ideas matched to your diet, time and budget. For a balanced plate, the USDA's <a href="https://www.myplate.gov/" target="_blank" rel="noopener">MyPlate guide</a> shows what a healthy meal looks like.</p>
     <div class="meal-cards">
       <button class="meal-card" type="button" data-preset-link="breakfast15"><strong>Breakfast Wheel</strong><span>Quick breakfasts in 15 minutes or less.</span></button>
       <button class="meal-card" type="button" data-preset-link="any"><strong>Lunch Wheel</strong><span>Midday meals, from Cobb salad to Philly cheesesteak.</span></button>
@@ -644,8 +645,9 @@ footer p{margin:0 0 10px;font-size:.92rem}
     <details><summary>What should I eat today?</summary><p>Spin the wheel above. It picks randomly from 100 real dishes matched to your meal, diet, time and budget — so instead of a generic list, you get one decision you can act on right now, with ingredients included.</p></details>
     <details><summary>What to eat for dinner when I can't decide?</summary><p>Tap the “Dinner Dilemma” preset and spin. It filters the wheel to dinner dishes only. Still stuck after one spin? Spin again — or remove the thinking completely and cook whatever the second spin says.</p></details>
     <details><summary>Is there a veg-only option?</summary><p>Yes. Set the Veg / Non-Veg filter to Veg and every dish on the wheel is vegetarian. There's also an American Classics preset with comfort-food favorites like meatloaf, mac & cheese and BBQ ribs.</p></details>
-    <details><summary>Can I add my own foods to the wheel?</summary><p>Yes — use “Add your own foods” in the Inputs panel. Your items join the spin instantly for this session. Family favorites and fridge-leftover ideas work best.</p></details>
+    <details><summary>Can I add my own foods to the wheel?</summary><p>Yes — use “Add your own foods” in the Inputs panel. Your items join the spin instantly for this session. Family favorites and fridge-leftover ideas work best. You can also <a href="suggest.html">suggest a dish</a> for the wheel.</p></details>
     <details><summary>Is the What to Eat Wheel free?</summary><p>Completely free, no sign-up, no download. It runs entirely in your browser as a single lightweight page — which is also why it loads fast on any phone or laptop.</p></details>
+    <details><summary>What should I cook tonight?</summary><p>Tap the “Dinner Dilemma” preset and spin — the wheel gives you one dinner idea with its ingredients, so you know exactly what to cook tonight. One spin, one decision, no more “I don't know”.</p></details>
   </section>
 </main>
 
@@ -656,6 +658,7 @@ footer p{margin:0 0 10px;font-size:.92rem}
         <h4>What to Eat Wheel</h4>
         <p>Help you decide what to eat today. Free, no sign-up — spin, decide, eat.</p>
         <p>© 2026 What to Eat Wheel</p>
+        <p>Last updated: November 25, 2026</p>
       </div>
       <div>
         <h4>Tools</h4>
