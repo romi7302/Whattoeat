@@ -36,4 +36,28 @@
     <changefreq>yearly</changefreq>
     <priority>0.5</priority>
   </url>
+  <url>
+    <loc>https://whattoeat-kohl.vercel.app/dinner-ideas.html</loc>
+    <lastmod>2026-11-26</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://whattoeat-kohl.vercel.app/what-to-cook-tonight.html</loc>
+    <lastmod>2026-11-26</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://whattoeat-kohl.vercel.app/lunch-ideas.html</loc>
+    <lastmod>2026-11-26</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://whattoeat-kohl.vercel.app/what-should-i-eat.html</loc>
+    <lastmod>2026-11-26</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
 </urlset>
